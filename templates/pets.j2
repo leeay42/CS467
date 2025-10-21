@@ -37,7 +37,7 @@
 		}
 	}
 
-	function newApplication() {
+	function newPet() {
 		showform('insert');
 	}
 
@@ -192,7 +192,7 @@
     <!-- browse -->
 
 	<div id="insert">
-		<!-- form to INSERT new data into Colleges-->
+		<!-- form to INSERT new data into Pets-->
 		<form id="insertPet" action="/pets" method="post">
 			<legend><strong>Add A Pet</strong></legend>
             <p></p>
@@ -224,7 +224,7 @@
 				<input type="number" class="form-control" id="images" name="images" placeholder="">
 			</fieldset>
 
-            <!-- Create 'Add Application' and 'Cancel' buttons -->
+            <!-- Create 'Add Pet' and 'Cancel' buttons -->
 			<input type="submit" value="Add" name="insertPet" class="btn btn-primary" style="margin:.5rem;">
 			<input class="btn" type="button" value="Cancel" onClick="browsePets()"> 
         </form>
