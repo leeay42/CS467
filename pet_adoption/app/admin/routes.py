@@ -1,4 +1,6 @@
 # https://stackoverflow.com/questions/40015103/upload-file-size-16mb-to-mongodb
+# https://flask-wtf.readthedocs.io/en/1.0.x/quickstart/
+# https://stackabuse.com/flask-form-validation-with-flask-wtf/
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from bson.objectid import ObjectId
