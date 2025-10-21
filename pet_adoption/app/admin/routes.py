@@ -147,4 +147,4 @@ def delete_pet(id):
 def list_pets():
     """LIST - Display all pets"""
     animals = list(animals_collection.find())
-    return render_template('admin/list_pets.html', animals=animals)
+    return render_template('admin/pets.j2', animals=animals)
