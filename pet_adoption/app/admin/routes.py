@@ -6,13 +6,12 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from bson.objectid import ObjectId
 from bson import Binary
 from datetime import datetime
-from app.models import get_project
+from app import db
 from app.admin.forms import PetForm
 
 admin = Blueprint('admin', __name__)
 
 # Get MongoDB collections
-db = get_project()
 animals_collection = db['animals']
 
 
