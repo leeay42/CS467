@@ -12,8 +12,9 @@ from app.admin.forms import PetForm
 admin = Blueprint('admin', __name__)
 
 # Get MongoDB collections
-dbname = get_project()['animal_adoption']
-animals_collection = dbname['animals']
+db = get_project()
+animals_collection = db['animals']
+
 
 @admin.route('/admin/pets/create', methods=['GET', 'POST'])
 def create_pet():
@@ -31,7 +32,9 @@ def create_pet():
         # Convert disposition textarea to list (split by newlines)
         disposition_list = []
         if form.disposition.data:
-            disposition_list = [line.strip() for line in form.disposition.data.split('\n') if line.strip()]
+            disposition_list = [line.strip() for line in 
+                                form.disposition.data.split('\n') if
+                                line.strip()]
 
         # Create animal document matching schema
         animal = {
