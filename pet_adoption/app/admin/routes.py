@@ -14,7 +14,7 @@ from app.admin import admin
 animals_collection = db['animals']
 
 
-@admin.route('/admin/pets/create', methods=['GET', 'POST'])
+@admin.route('/pets/create', methods=['GET', 'POST'])
 def create_pet():
     """CREATE - Add a new pet to the database"""
     form = PetForm()
@@ -59,7 +59,7 @@ def create_pet():
     return render_template('admin/create_pet.html', form=form)
 
 
-@admin.route('/admin/pets/edit/<id>', methods=['GET', 'POST'])
+@admin.route('/pets/edit/<id>', methods=['GET', 'POST'])
 def edit_pet(id):
     """UPDATE - Edit an existing pet"""
     form = PetForm()
@@ -125,7 +125,7 @@ def edit_pet(id):
     return render_template('admin/edit_pet.html', form=form, animal=animal)
 
 
-@admin.route('/admin/pets/delete/<id>', methods=['POST'])
+@admin.route('/pets/delete/<id>', methods=['POST'])
 def delete_pet(id):
     """DELETE - Remove a pet from the database"""
     animal = animals_collection.find_one({"_id": ObjectId(id)})
@@ -144,7 +144,7 @@ def delete_pet(id):
     return redirect(url_for('admin.list_pets'))
 
 
-@admin.route('/admin/pets')
+@admin.route('/pets')
 def list_pets():
     """LIST - Display all pets"""
     animals = list(animals_collection.find())
