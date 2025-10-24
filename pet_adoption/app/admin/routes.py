@@ -8,8 +8,7 @@ from bson import Binary
 from datetime import datetime
 from app import db
 from app.admin.forms import PetForm
-
-admin = Blueprint('admin', __name__)
+from app.admin import admin
 
 # Get MongoDB collections
 animals_collection = db['animals']

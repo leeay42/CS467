@@ -16,12 +16,15 @@ mongo_uri = f"mongodb+srv://{db_username}:{db_password}@cluster0.okjtuan.mongodb
 client = MongoClient(mongo_uri)
 db = client[db_name]
 
+
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-    
+
     # Register blueprints
-    # from app.admin.routes import admin
-    # app.register_blueprint(admin, url_prefix='/admin')
-    
+    from app.admin.routes import admin
+    app.register_blueprint(admin, url_prefix='/admin')
+
     return app
+
+# Registering blueprints: https://realpython.com/flask-blueprint/?utm_source=chatgpt.com
