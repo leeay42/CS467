@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+	<html>
+
+	<head>
+		<title>Paw-sitively Purrfect Partners</title>
+		{# keep CSS link commented out for now #}
+		<style>
+		h1 {text-align: center;}
+		section {text-align: center;}
+		.navbar { display: flex; position: sticky; align-items: center; justify-content: space-between; top: 0px; padding: 10px 20px; }
+		.nav-list { display: flex; list-style: none; }
+		.nav-list li { margin-right: 20px; }
+		.btn { background-color: #ffd700; color: #000; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+		.btn-danger { background-color: #e03e2d; color: #fff; }
+		</style>
+
+	</head>
+
+	<body>
+	  <nav class="navbar">
+		<ul class="nav-list">
+			<li><a href="{{ url_for('main.browse') if 'main' in globals() else url_for('index') }}">Browse Pets</a></li>
+			<li><a href="{{ url_for('main.search') if 'main' in globals() else '#' }}">Search Pets</a></li>
+			<li><a href="#">Donate</a></li>
+			<li><a href="#">Contact Us</a></li>
+			<li><a href="{{ url_for('auth.login') if 'auth' in globals() else '/' }}">Login</a></li>
+			<li><a href="{{ url_for('auth.register') if 'auth' in globals() else 'register' }}">Register</a></li>
+		</ul>
+	  </nav>
+
+		{# Support either `data` or `animals` passed from different routes #}
+		{% set pets = data if data is defined else (animals if animals is defined else []) %}
+
+		<div id="browse">
+			<table border="1" cellpadding="5">
+				{% if pets and pets|length > 0 %}
+					<thead>
+						<tr>
+							<th>Pet Name</th>
+							<th>Availability</th>
+							<th>Type</th>
+							<th>Breed</th>
+							<th>Description</th>
+							<th>Disposition</th>
+							<th>News Items</th>
+							<th>Images</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for document in pets %}
+						<tr>
+							<th scope="row">{{ document.name }}</th>
+							<td>{{ document.availability }}</td>
+							<td>{{ document.type }}</td>
+							<td>{{ document.breed }}</td>
+							<td>{{ document.description }}</td>
+							<td>{% if document.disposition %}{{ document.disposition | join(', ') }}{% else %}--{% endif %}</td>
+							<td>{{ document.news_item or '--' }}</td>
+							<td>{% if document.public_image %}Image{% else %}--{% endif %}</td>
+							<td>
+								<a class="btn" href="{{ url_for('admin.edit_pet', id=document._id) if document._id is defined else url_for('admin.edit_pet', id=document.id) }}">Edit</a>
+
+								<form action="{{ url_for('admin.delete_pet', id=document._id) if document._id is defined else url_for('admin.delete_pet', id=document.id) }}" method="post" style="display:inline">
+									{% if csrf_token is defined %}
+										<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+									{% endif %}
+									<button type="submit" class="btn btn-danger">Delete</button>
+								</form>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				{% else %}
+					<tr><td colspan="9">No pets available.</td></tr>
+				{% endif %}
+			</table>
+
+			<p>&nbsp;</p>
+			<p><a href="{{ url_for('admin.create_pet') }}">Add A New Pet</a></p>
+		</div>
+
+	</body>
+	</html>
