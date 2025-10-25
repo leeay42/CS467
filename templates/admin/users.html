@@ -1,9 +1,9 @@
+<!DOCTYPE html>
 
 	<html>
 
 	<head>
 		<title>Paw-sitively Purrfect Partners</title>
-		{# keep CSS link commented out for now #}
 		<style>
 		h1 {text-align: center;}
 		section {text-align: center;}
@@ -29,39 +29,34 @@
 	  </nav>
 
 		{# Support either `data` or `animals` passed from different routes #}
-		{% set pets = data if data is defined else (animals if animals is defined else []) %}
+		{% set users = data if data is defined else (users if users is defined else []) %}
 
 		<div id="browse">
 			<table border="1" cellpadding="5">
-				{% if pets and pets|length > 0 %}
+				{% if users and users|length > 0 %}
 					<thead>
 						<tr>
-							<th>Pet Name</th>
-							<th>Availability</th>
-							<th>Type</th>
-							<th>Breed</th>
-							<th>Description</th>
-							<th>Disposition</th>
-							<th>News Items</th>
-							<th>Images</th>
-							<th>Actions</th>
+                            <th>User ID</th>
+							<th>First Name</th>
+							<th>Last Name</th>
+							<th>Email</th>
+							<th>Password</th>
+							<th>Admin Access</th>
 						</tr>
 					</thead>
 					<tbody>
-					{% for document in pets %}
+					{% for document in users %}
 						<tr>
-							<th scope="row">{{ document.name }}</th>
-							<td>{{ document.availability }}</td>
-							<td>{{ document.type }}</td>
-							<td>{{ document.breed }}</td>
-							<td>{{ document.description }}</td>
-							<td>{% if document.disposition %}{{ document.disposition | join(', ') }}{% else %}--{% endif %}</td>
-							<td>{{ document.news_item or '--' }}</td>
-							<td>{% if document.public_image %}Image{% else %}--{% endif %}</td>
+							<th scope="row">{{ document.id }}</th>
+							<td>{{ document.first_name }}</td>
+							<td>{{ document.last_name }}</td>
+							<td>{{ document.email }}</td>
+							<td>{{ document.password }}</td>
+                            <td>{{ document.is_admin }}</td>
 							<td>
-								<a class="btn" href="{{ url_for('admin.edit_pet', id=document._id) if document._id is defined else url_for('admin.edit_pet', id=document.id) }}">Edit</a>
+								<a class="btn" href="{{ url_for('admin.edit_user', id=document._id) if document._id is defined else url_for('admin.edit_user', id=document.id) }}">Edit</a>
 
-								<form action="{{ url_for('admin.delete_pet', id=document._id) if document._id is defined else url_for('admin.delete_pet', id=document.id) }}" method="post" style="display:inline">
+								<form action="{{ url_for('admin.delete_user', id=document._id) if document._id is defined else url_for('admin.delete_user', id=document.id) }}" method="post" style="display:inline">
 									{% if csrf_token is defined %}
 										<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 									{% endif %}
@@ -72,12 +67,12 @@
 					{% endfor %}
 					</tbody>
 				{% else %}
-					<tr><td colspan="9">No pets available.</td></tr>
+					<tr><td colspan="9">No users available.</td></tr>
 				{% endif %}
 			</table>
 
 			<p>&nbsp;</p>
-			<p><a href="{{ url_for('admin.create_pet') }}">Add A New Pet</a></p>
+			<p><a href="{{ url_for('admin.create_user') }}">Add A New User</a></p>
 		</div>
 
 	</body>
