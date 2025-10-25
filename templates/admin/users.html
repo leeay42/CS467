@@ -28,7 +28,7 @@
 		</ul>
 	  </nav>
 
-		{# Support either `data` or `animals` passed from different routes #}
+		{# Support either `data` or `pets` passed from different routes #}
 		{% set users = data if data is defined else (users if users is defined else []) %}
 
 		<div id="browse">
