@@ -1,3 +1,4 @@
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # Get login information from user
@@ -6,8 +7,10 @@ def login():
         email = form.email.data
         password = form.password.data
         entered_login = {'email': email, 'password': password}
+        user = users_collection.find_one(entered_login)
         # Check database for login credentials
-        if users_collection.find_one(entered_login):
+        if user:
+            session['admin_access'] = user.get('admin_access')
             flash("Log in successful.")
             return render_template('index.html')
         else:
@@ -28,7 +31,7 @@ def createUser():
         user = {"admin_access": admin_access, "first_name": first_name, "last_name": last_name, "email": email, "password": password}
         # Check that user info doesn't already exist in DB
         if users_collection.find_one(user):
-            flash("User already exists.")
+            flash("User already exists. Please try again.")
             return render_template('register.html')
         # Create user account in DB
         else:
