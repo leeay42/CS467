@@ -1,5 +1,5 @@
 
-@app.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     # Get login information from user
     form = LoginForm()
@@ -19,7 +19,7 @@ def login():
             return redirect('/login')
     return render_template('login.html')
 
-@app.route('/register', methods=['GET', 'POST'])
+@auth.route('/register', methods=['GET', 'POST'])
 def createUser():
     # Get account information from user
     form = RegisterForm()
@@ -40,3 +40,9 @@ def createUser():
             flash("User created successfully. Please log in.")
             return render_template('login.html')
     return render_template('register.html')
+
+# Not in app architecture, clears session
+@auth.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
