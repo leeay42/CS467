@@ -10,6 +10,7 @@ def login():
         user = users_collection.find_one(entered_login)
         # Check database for login credentials
         if user:
+            # Save admin access T/F value for session
             session['admin_access'] = user.get('admin_access')
             flash("Log in successful.")
             return render_template('index.html')
