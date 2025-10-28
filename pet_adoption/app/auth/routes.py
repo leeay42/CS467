@@ -1,3 +1,6 @@
+from flask import session, redirect, flash, render_template
+from app.auth.forms import LoginForm, RegisterForm
+from app.auth import auth
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -45,4 +48,4 @@ def createUser():
 @auth.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect('/login')
