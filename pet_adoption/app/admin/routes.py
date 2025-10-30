@@ -1,6 +1,9 @@
 # https://stackoverflow.com/questions/40015103/upload-file-size-16mb-to-mongodb
 # https://flask-wtf.readthedocs.io/en/1.0.x/quickstart/
 # https://stackabuse.com/flask-form-validation-with-flask-wtf/
+# https://hackersandslackers.com/flask-routes/
+# https://codingnomads.com/python-flask-wtf-forms
+# https://ncoughlin.com/posts/restful-routing
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from bson.objectid import ObjectId
@@ -9,16 +12,30 @@ from datetime import datetime
 from app import db
 from app.admin.forms import PetForm
 from app.admin import admin
+from app.auth.decorators import admin_access
 
 # Get MongoDB collections
 animals_collection = db['animals']
 
 
-@admin.route('/pets/create', methods=['GET', 'POST'])
-def create_pet():
-    """CREATE - Add a new pet to the database"""
+@admin.route('/pets/<id>')
+@admin_access
+def show_modified_pet(id):
+    """Display single pet profile after being modified or created"""
+    animal = animals_collection.find_one({"_id": ObjectId(id)})
+    if not animal:
+        flash("Pet not found.", "error")
+        return redirect(url_for('admin.admin_dashboard'))
+    return render_template('profile.html', pet=animal)
+
+
+@admin.route('/pets/new', methods=['GET', 'POST'])
+@admin_access
+def admin_dashboard():
+    """Admin dashboard - GET displays all pets and POST handles add form"""
     form = PetForm()
 
+    # Handle POST request for adding a new pet
     if form.validate_on_submit():
         # Handle image upload and convert to Binary
         image_binary = None
@@ -52,16 +69,19 @@ def create_pet():
 
         if result.inserted_id:
             flash(f"Pet '{animal['name']}' created successfully!", "success")
-            return redirect(url_for('admin.list_pets'))
+            return redirect(url_for('admin.show_modified_pet', id=str(result.inserted_id)))
         else:
             flash("Error creating pet. Please try again.", "error")
 
-    return render_template('admin/create_pet.html', form=form)
+    # GET request: display dashboard with form
+    animals = list(animals_collection.find())
+    return render_template('dashboard.html', animals=animals, form=form)
 
 
-@admin.route('/pets/edit/<id>', methods=['GET', 'POST'])
+@admin.route('/pets/<id>/edit', methods=['GET', 'POST'])
+@admin_access
 def edit_pet(id):
-    """UPDATE - Edit an existing pet"""
+    """Edit an existing pet - GET shows form, POST updates pet"""
     form = PetForm()
 
     # Find the animal by ID
@@ -69,8 +89,24 @@ def edit_pet(id):
 
     if not animal:
         flash("Pet not found.", "error")
-        return redirect(url_for('admin.list_pets'))
+        return redirect(url_for('admin.admin_dashboard'))
 
+    # Pre-fill form with existing animal data (for GET request)
+    if request.method == 'GET':
+        form.name.data = animal.get('name')
+        form.availability.data = animal.get('availability')
+        form.type.data = animal.get('type')
+        form.breed.data = animal.get('breed')
+        form.description.data = animal.get('description')
+
+        # Convert disposition list to textarea format (one per line)
+        if animal.get('disposition'):
+            form.disposition.data = '\n'.join(animal.get('disposition'))
+
+        form.news_item.data = animal.get('news_item')
+        # Note: Can't pre-fill file upload field
+
+    # POST: Update pet
     if form.validate_on_submit():
         # Handle image upload - keep existing if no new upload
         image_binary = animal.get('public_image')
@@ -103,36 +139,24 @@ def edit_pet(id):
         )
         if result.modified_count > 0:
             flash(f"Pet '{updated_animal['name']}' updated successfully!", "success")
+            return redirect(url_for('admin.show_modified_pet', id=id))
         else:
             flash("No changes made.", "info")
-        return redirect(url_for('admin.list_pets'))
 
-    # Pre-fill form with existing animal data (for GET request)
-    if request.method == 'GET':
-        form.name.data = animal.get('name')
-        form.availability.data = animal.get('availability')
-        form.type.data = animal.get('type')
-        form.breed.data = animal.get('breed')
-        form.description.data = animal.get('description')
-
-        # Convert disposition list to textarea format (one per line)
-        if animal.get('disposition'):
-            form.disposition.data = '\n'.join(animal.get('disposition'))
-
-        form.news_item.data = animal.get('news_item')
-        # Note: Can't pre-fill file upload field
-
-    return render_template('admin/edit_pet.html', form=form, animal=animal)
+    # Render template for GET or failed POST validation
+    animals = list(animals_collection.find())
+    return render_template('dashboard.html', form=form, animals=animals)
 
 
-@admin.route('/pets/delete/<id>', methods=['POST'])
+@admin.route('/pets/<id>/delete', methods=['POST'])
+@admin_access
 def delete_pet(id):
-    """DELETE - Remove a pet from the database"""
+    """Remove a pet from the database"""
     animal = animals_collection.find_one({"_id": ObjectId(id)})
 
     if not animal:
         flash("Pet not found.", "error")
-        return redirect(url_for('admin.list_pets'))
+        return redirect(url_for('admin.admin_dashboard'))
 
     result = animals_collection.delete_one({"_id": ObjectId(id)})
 
@@ -141,11 +165,4 @@ def delete_pet(id):
     else:
         flash("Error deleting pet. Please try again.", "error")
 
-    return redirect(url_for('admin.list_pets'))
-
-
-@admin.route('/pets')
-def list_pets():
-    """LIST - Display all pets"""
-    animals = list(animals_collection.find())
-    return render_template('admin/pets.j2', animals=animals)
+    return redirect(url_for('admin.admin_dashboard'))
