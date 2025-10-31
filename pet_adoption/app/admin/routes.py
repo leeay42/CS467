@@ -18,17 +18,6 @@ from app.auth.decorators import admin_access
 animals_collection = db['animals']
 
 
-@admin.route('/pets/<id>')
-@admin_access
-def show_modified_pet(id):
-    """Display single pet profile after being modified or created"""
-    animal = animals_collection.find_one({"_id": ObjectId(id)})
-    if not animal:
-        flash("Pet not found.", "error")
-        return redirect(url_for('admin.admin_dashboard'))
-    return render_template('profile.html', pet=animal)
-
-
 @admin.route('/pets/new', methods=['GET', 'POST'])
 @admin_access
 def admin_dashboard():
@@ -69,7 +58,7 @@ def admin_dashboard():
 
         if result.inserted_id:
             flash(f"Pet '{animal['name']}' created successfully!", "success")
-            return redirect(url_for('admin.show_modified_pet', id=str(result.inserted_id)))
+            return redirect(url_for('admin.admin_dashboard'))
         else:
             flash("Error creating pet. Please try again.", "error")
 
@@ -139,7 +128,7 @@ def edit_pet(id):
         )
         if result.modified_count > 0:
             flash(f"Pet '{updated_animal['name']}' updated successfully!", "success")
-            return redirect(url_for('admin.show_modified_pet', id=id))
+            return redirect(url_for('admin.admin_dashboard'))
         else:
             flash("No changes made.", "info")
 
