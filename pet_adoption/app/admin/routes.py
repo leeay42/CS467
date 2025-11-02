@@ -64,7 +64,8 @@ def admin_dashboard():
 
     # GET request: display dashboard with form
     animals = list(animals_collection.find())
-    return render_template('dashboard.html', animals=animals, form=form)
+    return render_template('dashboard.html', animals=animals, form=form,
+                           animal=None)
 
 
 @admin.route('/pets/<id>/edit', methods=['GET', 'POST'])
@@ -127,14 +128,16 @@ def edit_pet(id):
             {"$set": updated_animal}
         )
         if result.modified_count > 0:
-            flash(f"Pet '{updated_animal['name']}' updated successfully!", "success")
+            flash(f"Pet '{updated_animal['name']}' updated successfully!",
+                  "success")
             return redirect(url_for('admin.admin_dashboard'))
         else:
             flash("No changes made.", "info")
 
     # Render template for GET or failed POST validation
     animals = list(animals_collection.find())
-    return render_template('dashboard.html', form=form, animals=animals)
+    return render_template('dashboard.html', form=form, animals=animals,
+                           animal=animal)
 
 
 @admin.route('/pets/<id>/delete', methods=['POST'])
