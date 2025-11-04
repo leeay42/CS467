@@ -1,26 +1,36 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, DateField
+from wtforms import StringField, SubmitField, SelectField, DateField, FileField, SelectMultipleField
 from wtforms.validators import DataRequired, Optional, Length
+from flask_wtf.file import FileAllowed
 
 
 class PetForm(FlaskForm):
-    name = StringField('Pet Name', validators=[DataRequired(), Length(min=2, max=100)])
+    name = StringField('Pet Name', validators=[DataRequired(), Length(min=2, 
+                                                                      max=100)])
     type = SelectField('Pet Type', validators=[DataRequired()], choices=[
         ('dog', 'Dog'),
         ('cat', 'Cat'),
-        ('other', 'other')
-    ])
-    availability = SelectField('Availability', validators=[DataRequired()], choices=[
+        ('other', 'Other')
+    ], validate_choice=True)
+    availability = SelectField('Availability', validators=[DataRequired()], 
+                               choices=[
         ('Available', 'Available'),
         ('Not Available', 'Not Available'),
         ('Pending', 'Pending'),
         ('Adopted', 'Adopted')
-        ])
+        ], validate_choice=True)
     breed = StringField('Breed', validators=[DataRequired(), Length(min=2, max=100)])
-    description = StringField('Description', validators=[DataRequired(), Length(min=5, max=300)])
+    description = StringField('Description', validators=[DataRequired(), 
+                                                         Length(min=5, max=300)])
     profile_date = DateField('Profile Date', validators=[DataRequired()])
-    
-    disposition = SelectField('', validators=[DataRequired()])
+
+    # SelectMultipleField automatically returns a list which aligns with current DB structure
+    disposition = SelectMultipleField('Disposition', validators=[DataRequired()], choices=[
+        ('Good with other animals', 'Good with other animals'),
+        ('Good with children', 'Good with children'),
+        ('Animal must be leashed at all times', 'Animal must be leashed at all times')
+    ], validate_choice=True)
     news_item = StringField('News Item', validators=[DataRequired(), Length(min=2, max=300)])
-    public_image = 
+    public_image = FileField('Image File', validators=[
+                             FileAllowed(['jpg', 'png', 'jpeg'], 'JPG/PNG/JPEG only')])
     submit = SubmitField('Submit')

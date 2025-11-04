@@ -33,13 +33,6 @@ def admin_dashboard():
             image_data = image_file.read()  # Read file bytes
             image_binary = Binary(image_data)  # convert to mongoDB binary format
 
-        # Convert disposition textarea to list (split by newlines)
-        disposition_list = []
-        if form.disposition.data:
-            disposition_list = [line.strip() for line in 
-                                form.disposition.data.split('\n') if
-                                line.strip()]
-
         # Create animal document matching schema
         animal = {
             "name": form.name.data,
@@ -48,7 +41,7 @@ def admin_dashboard():
             "breed": form.breed.data,
             "description": form.description.data,
             "profile_date": date.now(),
-            "disposition": disposition_list,
+            "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
         }
@@ -89,9 +82,8 @@ def edit_pet(id):
         form.breed.data = animal.get('breed')
         form.description.data = animal.get('description')
 
-        # Convert disposition list to textarea format (one per line)
         if animal.get('disposition'):
-            form.disposition.data = '\n'.join(animal.get('disposition'))
+            form.disposition.data = animal.get('disposition')
 
         form.news_item.data = animal.get('news_item')
         # Note: Can't pre-fill file upload field
@@ -105,10 +97,6 @@ def edit_pet(id):
             image_data = image_file.read()
             image_binary = Binary(image_data)
 
-        # Convert disposition textarea to list
-        disposition_list = []
-        if form.disposition.data:
-            disposition_list = [line.strip() for line in form.disposition.data.split('\n') if line.strip()]
 
         # Update animal document
         updated_animal = {
@@ -117,7 +105,7 @@ def edit_pet(id):
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "disposition": disposition_list,
+            "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
         }
