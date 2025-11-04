@@ -81,6 +81,7 @@ def edit_pet(id):
         form.type.data = animal.get('type')
         form.breed.data = animal.get('breed')
         form.description.data = animal.get('description')
+        form.profile_date.data= animal.get('profile_date')
 
         if animal.get('disposition'):
             form.disposition.data = animal.get('disposition')
@@ -97,7 +98,6 @@ def edit_pet(id):
             image_data = image_file.read()
             image_binary = Binary(image_data)
 
-
         # Update animal document
         updated_animal = {
             "name": form.name.data,
@@ -105,6 +105,7 @@ def edit_pet(id):
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
+            "profile_data": animal.get('profile_data'),
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
