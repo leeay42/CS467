@@ -8,7 +8,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from bson.objectid import ObjectId
 from bson import Binary
-from datetime import datetime
+from datetime import date
 from app import db
 from app.admin.forms import PetForm
 from app.admin import admin
@@ -47,7 +47,7 @@ def admin_dashboard():
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_date": datetime.now(),
+            "profile_date": date.now(),
             "disposition": disposition_list,
             "news_item": form.news_item.data,
             "public_image": image_binary
