@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register</title>
+
+      </head>
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Create New Account</h2>
+
+  <p>An account with Pawsitively Perfect Pets will keep you updated with our newest arrivals</p>
+  <p>By registering, you agree to be sent weekly updates.</p>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <form method="post" action="{{ url_for('register') }}">
+    <label for="Name">Name:</label>
+    <input type="text" name="name" required>
+    <label for="Email">Email:</label>
+    <input type="text" name="email" required>
+    <label for="password">Password:</label>
+    <input type="password" name="password" required>
+    <button type="submit">Register</button>
+  </form>
+{% endblock %}
+
+</html>
