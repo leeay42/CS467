@@ -1,0 +1,52 @@
+pet_adoption/
+│
+├── app/
+│   ├── __init__.py              # Flask app factory
+│   ├── models.py                # MongoDB document models
+│   ├── forms.py                 # Flask-WTF forms
+│   │
+│   ├── auth/
+│   │   ├── __init__.py
+│   │   ├── routes.py            # Login, registration, preferences
+│   │   ├── forms.py             # Auth forms
+│   │   └── decorators.py        # @admin_required, @login_required
+│   │
+│   ├── main/
+│   │   ├── __init__.py
+│   │   ├── routes.py            # Landing, browse, search, profile view
+│   │   └── utils.py             # Helper functions
+│   │
+│   ├── admin/
+│   │   ├── __init__.py
+│   │   ├── routes.py            # Dashboard, CRUD operations
+│   │   └── forms.py             # Animal profile forms
+│   │
+│   │
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── main.css
+│   │   ├── js/
+│   │   │   ├── search.js        # Live search filtering
+│   │   └── images/
+│   │       └── placeholders/
+│   │
+│   └── templates/
+│       ├── base.html            # Base layout with responsive nav
+│       ├── index.html           # Landing page
+│       ├── browse.html          # Profile gallery
+│       ├── profile.html         # Individual animal "dating profile"
+│       ├── search.html          # Search results
+│       │
+│       ├── admin/
+│       │   ├── dashboard.html
+│       │   ├── profile_form.html
+│       │   ├── profile_list.html
+│       │   └── analytics.html
+│       │
+│       ├── auth/
+│       │   ├── login.html
+│       │   ├── register.html    # Public user registration
+│       │   └── preferences.html # Email settings (stretch)
+│       │
+├── requirements.txt             # Python dependencies
+└── run.py                      # Application entry point

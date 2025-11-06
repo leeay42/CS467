@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+</head>
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>User Login</h2>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+  <form method="post" action="{{ url_for('login') }}">
+    <label for="email">Email:</label>
+    <input type="text" name="email" required>
+    <p></p>
+    <label for="password">Password:</label>
+    <input type="password" name="password" required>
+    <p></p>
+    <button type="submit">Login</button>
+  </form>
+
+  <p></p>
+  <a href="register">
+    <button type="submit">New User?</button>
+</a>
+{% endblock %}
+
+</html>
