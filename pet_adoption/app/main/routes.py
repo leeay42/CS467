@@ -4,10 +4,14 @@
 # https://stackoverflow.com/questions/18214612/how-to-access-app-config-in-a-blueprint
 # debugged single pet GET with claude.ai
 
-from flask import render_template, request, Blueprint, current_app
+from flask import render_template, request
 import base64
+from bson.objectid import ObjectId
+from app import db
+from app.main import main
 
-main = Blueprint('main', __name__)
+# Get MongoDB collections
+animals_collection = db['animals']
 
 # NOTE: move over to utils
 # helper to make pet documents from db usable
@@ -37,9 +41,6 @@ def index():
 # used browse.html
 @main.route('/browse', methods=['GET'])
 def browse(): 
-    # Get animals collection from app config
-    animals_collection = current_app.config['animals_collection']
-
     all_pets = list(animals_collection.find()) 
     prepped_pets = [prep_pet(pet) for pet in all_pets]
 
@@ -62,9 +63,6 @@ def browse():
 # used search.html
 @main.route('/search', methods=['GET'])  
 def search():  
-    # Get animals collection from app config
-    animals_collection = current_app.config['animals_collection']
-
     # Get filter parameters from search.html
     selected_types = request.args.getlist('types[]')
     selected_breeds = request.args.getlist('breeds[]')
@@ -111,8 +109,6 @@ def search():
 # search.html and browse.html to profile.html
 @main.route('/pet_detail/<string:pet_id>', methods=['GET'])  
 def pet_detail(pet_id):
-    # Get animals collection from app config
-    animals_collection = current_app.config['animals_collection']
     
     try:
         # need to change string to ObjectID for MongoDB
@@ -127,3 +123,4 @@ def pet_detail(pet_id):
     # other client errors
     except Exception as e:
         return f"Cannot GET: {pet_id}, Error: {str(e)}", 400
+
