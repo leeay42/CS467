@@ -8,7 +8,7 @@ from flask import render_template, request
 from bson.objectid import ObjectId
 from app import db
 from app.main import main
-from app.main.utils import prep_pet
+from app.main.utils import prep_pet, paginate
 
 # Get MongoDB collections
 animals_collection = db['animals']
@@ -23,23 +23,18 @@ def index():
 # used browse.html
 @main.route('/browse', methods=['GET'])
 def browse(): 
-
     all_pets = list(animals_collection.find()) 
     prepped_pets = [prep_pet(pet) for pet in all_pets]
 
     # Pagination for 3 x 3 grid of pet profiles
     page = int(request.args.get('page', 1))         # {{ current_page }}, return 1 as default if none
-    per_page = 9    # total profiles for page
-    start_index = (page - 1) * per_page             # 1st profile to show on page
-    # last profile to show on page
-    # min to avoid going past the end of profiles
-    end_index = min(start_index + per_page, len(prepped_pets))  
+    pagination = paginate(prepped_pets, page=page, per_page=9)
     
     return render_template('browse.html', 
                             data=prepped_pets,
-                            current_page=page,
-                            start_index=start_index,
-                            end_index=end_index)
+                            current_page=pagination['page'],
+                            start_index=pagination['start_index'],
+                            end_index=pagination['end_index'])
 
 
 # Search for pets using selected categories
@@ -64,28 +59,24 @@ def search():
     
     # Get all pets matching filters from mongodb
     pets = list(animals_collection.find(query))
-    prepped_pets = [prep_pet(pet) for pet in pets]      # use utils helper 
+    prepped_pets = [prep_pet(pet) for pet in pets] 
     
     # Get all unique breeds for filter display
     all_breeds = animals_collection.distinct('breed')
 
     # Pagination for 3 x 3 grid of pet profiles
     page = int(request.args.get('page', 1))         # {{ current_page }}, return 1 as default if none
-    per_page = 9        # total profiles for page
-    start_index = (page - 1) * per_page             # 1st profile to show on page
-    # last profile to show on page
-    # min to avoid going past the end of profiles
-    end_index = min(start_index + per_page, len(prepped_pets))
-    
+    pagination = paginate(prepped_pets, page=page, per_page=9)
+
     return render_template('search.html',
                         results=prepped_pets, 
                         breeds=sorted(all_breeds),
                         selected_types=selected_types,
                         selected_breeds=selected_breeds,
                         selected_availability=selected_availability,
-                        current_page=page,
-                        start_index=start_index,
-                        end_index=end_index)
+                        current_page=pagination['page'],
+                        start_index=pagination['start_index'],
+                        end_index=pagination['end_index'])
 
 # STILL NEED TO VERIFY
 # get detail about a single pet
@@ -98,8 +89,8 @@ def pet_detail(pet_id):
         # need to change string to ObjectID for MongoDB
         pet = animals_collection.find_one({'_id': ObjectId(pet_id)})
         if pet:
-            prepped_pet = prep_pet(pet)     # use utils helper 
-            return render_template('pet_detail.html', pet=prepped_pet)
+            prepped_pet = prep_pet(pet)
+            return render_template('profile.html', pet=prepped_pet)
 
         else:
             # pet does not exist in db
@@ -107,4 +98,3 @@ def pet_detail(pet_id):
     # other client errors
     except Exception as e:
         return f"Cannot GET: {pet_id}, Error: {str(e)}", 400
-
