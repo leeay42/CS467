@@ -5,31 +5,13 @@
 # debugged single pet GET with claude.ai
 
 from flask import render_template, request
-import base64
 from bson.objectid import ObjectId
 from app import db
 from app.main import main
+from app.main.utils import prep_pet
 
 # Get MongoDB collections
 animals_collection = db['animals']
-
-# NOTE: move over to utils
-# helper to make pet documents from db usable
-def prep_pet(pet):
-    return {
-        "id": str(pet['_id']),
-        "pet_name": pet['name'],
-        "availability": pet['availability'],
-        "type": pet['type'],
-        "breed": pet['breed'],
-        "description": pet['description'],
-        "profile_date": pet['profile_date'].strftime("%m/%d/%Y"),
-        "disposition": pet['disposition'],
-        "news_item": pet['news_item'],
-        # images are binData, converted to string for URL
-        "images": f"data:image/jpeg;base64,{base64.b64encode(pet['public_image']).decode('utf-8')}"
-    }
-
 
 @main.route("/")
 def index():
@@ -41,6 +23,7 @@ def index():
 # used browse.html
 @main.route('/browse', methods=['GET'])
 def browse(): 
+
     all_pets = list(animals_collection.find()) 
     prepped_pets = [prep_pet(pet) for pet in all_pets]
 
@@ -63,6 +46,7 @@ def browse():
 # used search.html
 @main.route('/search', methods=['GET'])  
 def search():  
+
     # Get filter parameters from search.html
     selected_types = request.args.getlist('types[]')
     selected_breeds = request.args.getlist('breeds[]')
@@ -80,7 +64,7 @@ def search():
     
     # Get all pets matching filters from mongodb
     pets = list(animals_collection.find(query))
-    prepped_pets = [prep_pet(pet) for pet in pets]      # use helper above
+    prepped_pets = [prep_pet(pet) for pet in pets]      # use utils helper 
     
     # Get all unique breeds for filter display
     all_breeds = animals_collection.distinct('breed')
@@ -114,7 +98,7 @@ def pet_detail(pet_id):
         # need to change string to ObjectID for MongoDB
         pet = animals_collection.find_one({'_id': ObjectId(pet_id)})
         if pet:
-            prepped_pet = prep_pet(pet)     # use helper above
+            prepped_pet = prep_pet(pet)     # use utils helper 
             return render_template('pet_detail.html', pet=prepped_pet)
 
         else:
