@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Register</title>
 
-      </head>
+<head>
+    <title>Login</title>
+</head>
 
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Create New Account</h2>
-
-  <p>An account with Pawsitively Perfect Pets will keep you updated with our newest arrivals</p>
-  <p>By registering, you agree to be sent weekly updates.</p>
+  <h2>User Login</h2>
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       <ul class="messages">
@@ -21,15 +18,20 @@
       </ul>
     {% endif %}
   {% endwith %}
-  <form method="post" action="{{ url_for('register') }}">
-    <label for="Name">Name:</label>
-    <input type="text" name="name" required>
-    <label for="Email">Email:</label>
+  <form method="post" action="{{ url_for('auth.login') }}">
+    <label for="email">Email:</label>
     <input type="text" name="email" required>
+    <p></p>
     <label for="password">Password:</label>
     <input type="password" name="password" required>
-    <button type="submit">Register</button>
+    <p></p>
+    <button type="submit">Login</button>
   </form>
+
+  <p></p>
+  <a href="register">
+    <button type="submit">New User?</button>
+</a>
 {% endblock %}
 
 </html>

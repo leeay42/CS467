@@ -1,16 +1,18 @@
 from flask import render_template, redirect, url_for, flash, request, session, Blueprint
 import base64
 from app import db
-from flask import session, redirect, flash, render_template
+from flask import session, redirect, flash, render_template, Blueprint
 from app.auth.forms import LoginForm, RegisterForm
-from app.auth import auth
+## Removed circular import: from app.auth import auth
 #from app.forms import TestForm
 
 users_collection = db['users']
+auth = Blueprint('auth', __name__)
 
 @auth.route('/')
 def index():
-    return render_template('index.html')
+    # Redirect to the main blueprint's index route
+    return redirect(url_for('main.index'))
     
 @auth.route('/login', methods=['GET', 'POST'])
 def login():

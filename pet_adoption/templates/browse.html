@@ -147,7 +147,7 @@
 </style>
 
 <div class="page-layout">
-    <form class="filters" method="GET" action="{{ url_for('gallery') }}">
+    <form class="filters" method="GET" action="{{ url_for('main.browse') }}">
         <div class="filter-section">
             <h3>Pet Type</h3>
             <div class="filter-options">
@@ -242,10 +242,10 @@
 
         <div class="pagination">
             {% if start_index > 0 %}
-                <a href="{{ url_for('gallery', page=current_page-1) }}" class="btn">Previous</a>
+                <a href="{{ url_for('main.browse', page=current_page-1) }}" class="btn">Previous</a>
             {% endif %}
             {% if end_index < data|length %}
-                <a href="{{ url_for('gallery', page=current_page+1) }}" class="btn">Next</a>
+                <a href="{{ url_for('main.browse', page=current_page+1) }}" class="btn">Next</a>
             {% endif %}
         </div>
     {% else %}
