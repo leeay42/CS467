@@ -18,6 +18,16 @@ def index():
     # NOTE: highlights go here
     return render_template('index.html')
 
+@main.route("/donate")
+def donate():
+    # NOTE: temp for testing profile.html and base.html
+    return render_template('donate.html')
+
+@main.route("/contact")
+def contact():
+    # NOTE: temp for testing profile.html and base.html
+    return render_template('contact.html')
+
 
 # browse through all pets
 # used browse.html
@@ -78,7 +88,7 @@ def search():
                         start_index=pagination['start_index'],
                         end_index=pagination['end_index'])
 
-# STILL NEED TO VERIFY
+
 # get detail about a single pet
 # will link from "View Profile"
 # search.html and browse.html to profile.html
@@ -98,3 +108,4 @@ def pet_detail(pet_id):
     # other client errors
     except Exception as e:
         return f"Cannot GET: {pet_id}, Error: {str(e)}", 400
+    
