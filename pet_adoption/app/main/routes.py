@@ -6,6 +6,7 @@
 
 from flask import render_template, request
 from bson.objectid import ObjectId
+from datetime import datetime
 from app import db
 from app.main import main
 from app.main.utils import prep_pet, paginate
@@ -13,19 +14,21 @@ from app.main.utils import prep_pet, paginate
 # Get MongoDB collections
 animals_collection = db['animals']
 
+# landing page
 @main.route("/")
 def index():
-    # NOTE: highlights go here
+    # NOTE: highlights go here (also need for profile.html)
     return render_template('index.html')
 
+
+# NOTE: temp for testing profile.html and base.html
 @main.route("/donate")
 def donate():
-    # NOTE: temp for testing profile.html and base.html
     return render_template('donate.html')
 
+# NOTE: temp for testing profile.html and base.html
 @main.route("/contact")
 def contact():
-    # NOTE: temp for testing profile.html and base.html
     return render_template('contact.html')
 
 
@@ -57,7 +60,8 @@ def search():
     selected_types = request.args.getlist('types[]')
     selected_breeds = request.args.getlist('breeds[]')
     selected_availability = request.args.getlist('availability[]')
-    # PLACEHOLDER: make one for DATE
+    date_from = request.args.get('date_from')  # Format: YYYY-MM-DD
+    date_to = request.args.get('date_to')      # Format: YYYY-MM-DD
         
     # Build json query filter for mongoDB
     query = {}
@@ -67,6 +71,14 @@ def search():
         query['breed'] = {'$in': selected_breeds}
     if selected_availability:
         query['availability'] = {'$in': selected_availability}
+    
+    # Date range filter for profile_date
+    if date_from or date_to:
+        query['profile_date'] = {}
+        if date_from:
+            query['profile_date']['$gte'] = datetime.strptime(date_from, '%Y-%m-%d')
+        if date_to:
+            query['profile_date']['$lte'] = datetime.strptime(date_to, '%Y-%m-%d')
     
     # Get all pets matching filters from mongodb
     pets = list(animals_collection.find(query))
@@ -85,10 +97,11 @@ def search():
                         selected_types=selected_types,
                         selected_breeds=selected_breeds,
                         selected_availability=selected_availability,
+                        date_from=date_from,
+                        date_to=date_to,
                         current_page=pagination['page'],
                         start_index=pagination['start_index'],
                         end_index=pagination['end_index'])
-
 
 # get detail about a single pet
 # will link from "View Profile"
