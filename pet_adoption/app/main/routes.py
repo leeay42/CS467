@@ -33,7 +33,8 @@ def contact():
 # used browse.html
 @main.route('/browse', methods=['GET'])
 def browse(): 
-    all_pets = list(animals_collection.find()) 
+    # get all pets sorted by descending order (newest first)
+    all_pets = list(animals_collection.find().sort('profile_date', -1)) 
     prepped_pets = [prep_pet(pet) for pet in all_pets]
 
     # Pagination for 3 x 3 grid of pet profiles
@@ -108,4 +109,4 @@ def pet_detail(pet_id):
     # other client errors
     except Exception as e:
         return f"Cannot GET: {pet_id}, Error: {str(e)}", 400
-    
+  
