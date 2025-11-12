@@ -25,6 +25,10 @@ def create_app():
     from app.admin.routes import admin
     app.register_blueprint(admin, url_prefix='/admin')
 
+    # Register main blueprints
+    from app.main.routes import main
+    app.register_blueprint(main)
+
     return app
 
 # Registering blueprints: https://realpython.com/flask-blueprint/?utm_source=chatgpt.com
