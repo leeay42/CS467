@@ -5,7 +5,7 @@
 # https://codingnomads.com/python-flask-wtf-forms
 # https://ncoughlin.com/posts/restful-routing
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from bson.objectid import ObjectId
 from bson import Binary
 from datetime import date

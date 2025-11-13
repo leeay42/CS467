@@ -305,7 +305,7 @@
 </style>
 
 <div class="page-layout">
-    <form class="filters" method="GET" action="{{ url_for('search') }}" id="filterForm">
+    <form class="filters" method="GET" action="{{ url_for('main.search') }}" id="filterForm">
         <div class="filter-header">
             <h2>Filters</h2>
             <button type="button" class="clear-filters" onclick="clearAllFilters()">Clear All</button>
@@ -416,7 +416,7 @@
                             </div>
                         </div>
                         <div class="pet-actions">
-                            <a href="{{ url_for('pet_detail', pet_id=pet.id) }}" class="btn">View Profile</a>
+                            <a href="{{ url_for('main.highlight', pet_id=pet.id) }}" class="btn">View Profile</a>
                         </div>
                     </div>
                 </div>
@@ -425,10 +425,10 @@
 
             <div class="pagination">
                 {% if start_index > 0 %}
-                    <a href="{{ url_for('search', page=current_page-1) }}" class="btn">Previous</a>
+                    <a href="{{ url_for('main.search', page=current_page-1) }}" class="btn">Previous</a>
                 {% endif %}
                 {% if end_index < results|length %}
-                    <a href="{{ url_for('search', page=current_page+1) }}" class="btn">Next</a>
+                    <a href="{{ url_for('main.search', page=current_page+1) }}" class="btn">Next</a>
                 {% endif %}
             </div>
         {% else %}
