@@ -320,18 +320,18 @@
             <h3>Pet Type</h3>
             <div class="filter-options">
                 <div class="filter-option">
-                    <input type="checkbox" id="type-dog" name="types[]" value="Dog"
-                        {% if "Dog" in selected_types %}checked{% endif %}>
+                    <input type="checkbox" id="type-dog" name="types[]" value="dog"
+                        {% if "dog" in selected_types %}checked{% endif %}>
                     <label for="type-dog">Dog</label>
                 </div>
                 <div class="filter-option">
-                    <input type="checkbox" id="type-cat" name="types[]" value="Cat"
-                        {% if "Cat" in selected_types %}checked{% endif %}>
+                    <input type="checkbox" id="type-cat" name="types[]" value="cat"
+                        {% if "cat" in selected_types %}checked{% endif %}>
                     <label for="type-cat">Cat</label>
                 </div>
                 <div class="filter-option">
-                    <input type="checkbox" id="type-other" name="types[]" value="Other"
-                        {% if "Other" in selected_types %}checked{% endif %}>
+                    <input type="checkbox" id="type-other" name="types[]" value="other"
+                        {% if "other" in selected_types %}checked{% endif %}>
                     <label for="type-other">Other</label>
                 </div>
             </div>
@@ -376,7 +376,6 @@
             </div>
         </div>
 
-        <input type="hidden" name="page" value="{{ current_page }}">
         <button type="submit" class="btn apply-filters">Apply Filters</button>
     </form>
 
@@ -416,7 +415,7 @@
                             </div>
                         </div>
                         <div class="pet-actions">
-                            <a href="{{ url_for('main.highlight', pet_id=pet.id) }}" class="btn">View Profile</a>
+                            <a href="{{ url_for('main.pet_detail', pet_id=pet.id) }}" class="btn">View Profile</a>
                         </div>
                     </div>
                 </div>
@@ -425,10 +424,10 @@
 
             <div class="pagination">
                 {% if start_index > 0 %}
-                    <a href="{{ url_for('main.search', page=current_page-1) }}" class="btn">Previous</a>
+                    <a href="{{ url_for('main.search', page=current_page-1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability}) }}" class="btn">Previous</a>
                 {% endif %}
                 {% if end_index < results|length %}
-                    <a href="{{ url_for('main.search', page=current_page+1) }}" class="btn">Next</a>
+                    <a href="{{ url_for('main.search', page=current_page+1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability}) }}" class="btn">Next</a>
                 {% endif %}
             </div>
         {% else %}
