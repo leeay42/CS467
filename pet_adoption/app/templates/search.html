@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .page-layout {
+        display: flex;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .filters {
+        flex: 0 0 250px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    .filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .filter-header h2 {
+        margin: 0;
+        color: #333;
+        font-size: 1.3em;
+    }
+
+    .clear-filters {
+        background: none;
+        border: none;
+        color: #ff6b6b;
+        cursor: pointer;
+        font-size: 0.9em;
+        text-decoration: underline;
+        padding: 0;
+    }
+
+    .clear-filters:hover {
+        color: #ff5252;
+    }
+
+    .active-filters {
+        margin-bottom: 20px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .active-filters.show {
+        display: block;
+    }
+
+    .active-filters h4 {
+        margin: 0 0 10px 0;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .filter-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .filter-tag {
+        background: #ffd700;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.85em;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .filter-tag button {
+        background: none;
+        border: none;
+        color: #333;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 0;
+        margin-left: 3px;
+    }
+
+    .filter-section {
+        margin-bottom: 25px;
+    }
+
+    .filter-section h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+        font-size: 1.1em;
+        border-bottom: 2px solid #ffd700;
+        padding-bottom: 5px;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-option input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    .filter-option label {
+        cursor: pointer;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .apply-filters {
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .search-container {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .search-header {
+        margin-bottom: 30px;
+    }
+
+    .search-header h1 {
+        margin: 0 0 15px 0;
+        color: #333;
+    }
+
+    .results-info {
+        color: #666;
+        font-size: 0.95em;
+    }
+
+    .pet-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .pet-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        background-color: white;
+    }
+
+    .pet-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .pet-image {
+        height: 200px;
+        overflow: hidden;
+        background-color: #f5f5f5;
+        position: relative;
+    }
+
+    .pet-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .placeholder-image {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f0f0;
+        color: #666;
+    }
+
+    .availability-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.8em;
+        font-weight: bold;
+        background: white;
+    }
+
+    .availability-badge.available {
+        background: #4caf50;
+        color: white;
+    }
+
+    .availability-badge.not-available {
+        background: #f44336;
+        color: white;
+    }
+
+    .availability-badge.pending {
+        background: #ff9800;
+        color: white;
+    }
+
+    .availability-badge.adopted {
+        background: #9e9e9e;
+        color: white;
+    }
+
+    .pet-info {
+        padding: 15px;
+    }
+
+    .pet-info h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 1.2em;
+    }
+
+    .pet-details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .pet-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .pet-detail-item strong {
+        color: #333;
+    }
+
+    .pet-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .pet-actions .btn {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 30px 0;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .no-results h2 {
+        margin: 0 0 10px 0;
+        color: #999;
+    }
+
+    @media (max-width: 1200px) {
+        .pet-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-layout {
+            flex-direction: column;
+        }
+
+        .filters {
+            position: static;
+            flex: 1;
+        }
+
+        .pet-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="page-layout">
+    <form class="filters" method="GET" action="{{ url_for('main.search') }}" id="filterForm">
+        <div class="filter-header">
+            <h2>Filters</h2>
+            <button type="button" class="clear-filters" onclick="clearAllFilters()">Clear All</button>
+        </div>
+
+        <div class="active-filters" id="activeFilters">
+            <h4>Active Filters:</h4>
+            <div class="filter-tags" id="filterTags"></div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Pet Type</h3>
+            <div class="filter-options">
+                <div class="filter-option">
+                    <input type="checkbox" id="type-dog" name="types[]" value="dog"
+                        {% if "dog" in selected_types %}checked{% endif %}>
+                    <label for="type-dog">Dog</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="type-cat" name="types[]" value="cat"
+                        {% if "cat" in selected_types %}checked{% endif %}>
+                    <label for="type-cat">Cat</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="type-other" name="types[]" value="other"
+                        {% if "other" in selected_types %}checked{% endif %}>
+                    <label for="type-other">Other</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Breed</h3>
+            <div class="filter-options">
+                {% for breed in breeds %}
+                <div class="filter-option">
+                    <input type="checkbox" id="breed-{{ breed|lower|replace(' ', '-') }}" name="breeds[]" value="{{ breed }}"
+                        {% if breed in selected_breeds %}checked{% endif %}>
+                    <label for="breed-{{ breed|lower|replace(' ', '-') }}">{{ breed }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Availability</h3>
+            <div class="filter-options">
+                <div class="filter-option">
+                    <input type="checkbox" id="availability-available" name="availability[]" value="Available"
+                        {% if "Available" in selected_availability %}checked{% endif %}>
+                    <label for="availability-available">Available</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="availability-not-available" name="availability[]" value="Not Available"
+                        {% if "Not Available" in selected_availability %}checked{% endif %}>
+                    <label for="availability-not-available">Not Available</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="availability-pending" name="availability[]" value="Pending"
+                        {% if "Pending" in selected_availability %}checked{% endif %}>
+                    <label for="availability-pending">Pending</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="availability-adopted" name="availability[]" value="Adopted"
+                        {% if "Adopted" in selected_availability %}checked{% endif %}>
+                    <label for="availability-adopted">Adopted</label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn apply-filters">Apply Filters</button>
+    </form>
+
+    <div class="search-container">
+        <div class="search-header">
+            <h1>Search for Pets</h1>
+            {% if results %}
+                <p class="results-info">Showing {{ start_index + 1 }}-{{ end_index }} of {{ results|length }} results</p>
+            {% endif %}
+        </div>
+
+        {% if results %}
+            <div class="pet-grid">
+                {% for pet in results[start_index:end_index] %}
+                <div class="pet-card">
+                    <div class="pet-image">
+                        {% if pet.images %}
+                            <img src="{{ pet.images }}" alt="{{ pet.pet_name }}">
+                        {% else %}
+                            <div class="placeholder-image">No Image Available</div>
+                        {% endif %}
+                        <span class="availability-badge {{ pet.availability|lower|replace(' ', '-') }}">
+                            {{ pet.availability }}
+                        </span>
+                    </div>
+                    <div class="pet-info">
+                        <h3>{{ pet.pet_name }}</h3>
+                        <div class="pet-details">
+                            <div class="pet-detail-item">
+                                <strong>Type:</strong> {{ pet.type }}
+                            </div>
+                            <div class="pet-detail-item">
+                                <strong>Breed:</strong> {{ pet.breed }}
+                            </div>
+                            <div class="pet-detail-item">
+                                <strong>Availability:</strong> {{ pet.availability }}
+                            </div>
+                        </div>
+                        <div class="pet-actions">
+                            <a href="{{ url_for('main.pet_detail', pet_id=pet.id) }}" class="btn">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="pagination">
+                {% if start_index > 0 %}
+                    <a href="{{ url_for('main.search', page=current_page-1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability}) }}" class="btn">Previous</a>
+                {% endif %}
+                {% if end_index < results|length %}
+                    <a href="{{ url_for('main.search', page=current_page+1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability}) }}" class="btn">Next</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <h2>No pets found</h2>
+                <p>Try adjusting your search or filters to find more pets.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function updateActiveFilters() {
+        const filterTags = document.getElementById('filterTags');
+        const activeFiltersDiv = document.getElementById('activeFilters');
+        const checkboxes = document.querySelectorAll('.filters input[type="checkbox"]:checked');
+        
+        filterTags.innerHTML = '';
+        
+        if (checkboxes.length > 0) {
+            activeFiltersDiv.classList.add('show');
+            checkboxes.forEach(checkbox => {
+                const tag = document.createElement('div');
+                tag.className = 'filter-tag';
+                tag.innerHTML = `
+                    ${checkbox.nextElementSibling.textContent}
+                    <button type="button" onclick="removeFilter('${checkbox.id}')">×</button>
+                `;
+                filterTags.appendChild(tag);
+            });
+        } else {
+            activeFiltersDiv.classList.remove('show');
+        }
+    }
+
+    function removeFilter(checkboxId) {
+        document.getElementById(checkboxId).checked = false;
+        updateActiveFilters();
+    }
+
+    function clearAllFilters() {
+        document.querySelectorAll('.filters input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        updateActiveFilters();
+    }
+
+    // Update active filters on page load
+    document.addEventListener('DOMContentLoaded', updateActiveFilters);
+
+    // Update active filters when checkboxes change
+    document.querySelectorAll('.filters input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateActiveFilters);
+    });
+</script>
+
+{% endblock %}
