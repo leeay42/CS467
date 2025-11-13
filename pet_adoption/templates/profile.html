@@ -201,15 +201,15 @@
     <div class="main-content">
         <div class="image-section">
             <div class="main-image">
-                <img src="{{ pet.images[0] if pet.images else '/static/placeholder.jpg' }}" alt="{{ pet.pet_name }}">
+                <img src="{{ pet.images if pet.images else '/static/placeholder.jpg' }}" alt="{{ pet.pet_name }}">
             </div>
-            <div class="thumbnail-gallery">
+            {# <!-- <div class="thumbnail-gallery">
                 {% for image in pet.images[1:4] %}
                     <div class="thumbnail">
                         <img src="{{ image }}" alt="{{ pet.pet_name }} photo {{ loop.index + 1 }}">
                     </div>
                 {% endfor %}
-            </div>
+            </div> --> #}
         </div>
 
         <div class="pet-info">
@@ -244,10 +244,10 @@
                 <div class="info-value">{{ pet.description }}</div>
             </div>
 
-            {% if pet.news_items %}
+            {% if pet.news_item %}
             <div class="info-row">
                 <div class="info-label">Latest News</div>
-                <div class="info-value">{{ pet.news_items }}</div>
+                <div class="info-value">{{ pet.news_item }}</div>
             </div>
             {% endif %}
 
@@ -261,7 +261,7 @@
         <h2>Available Pets You Might Like</h2>
         <div class="related-pets-grid">
             {% for related_pet in related_pets %}
-                <a href="{{ url_for('main.highlight', pet_id=related_pet.id) }}" class="related-pet-card">
+                <a href="{{ url_for('highlight', pet_id=related_pet.id) }}" class="related-pet-card">
                     <div class="related-pet-image">
                         <img src="{{ related_pet.images[0] if related_pet.images else '/static/placeholder.jpg' }}" 
                              alt="{{ related_pet.pet_name }}">
