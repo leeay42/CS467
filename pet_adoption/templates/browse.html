@@ -11,56 +11,6 @@
         padding: 20px;
     }
 
-    .filters {
-        flex: 0 0 250px;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        height: fit-content;
-        position: sticky;
-        top: 100px;
-    }
-
-    .filter-section {
-        margin-bottom: 25px;
-    }
-
-    .filter-section h3 {
-        margin: 0 0 15px 0;
-        color: #333;
-        font-size: 1.1em;
-        border-bottom: 2px solid #ffd700;
-        padding-bottom: 5px;
-    }
-
-    .filter-options {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .filter-option {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .filter-option input[type="checkbox"] {
-        cursor: pointer;
-    }
-
-    .filter-option label {
-        cursor: pointer;
-        color: #666;
-        font-size: 0.9em;
-    }
-
-    .apply-filters {
-        margin-top: 20px;
-        width: 100%;
-    }
-
     .gallery-container {
         flex: 1;
         min-width: 0;
@@ -147,70 +97,6 @@
 </style>
 
 <div class="page-layout">
-    <form class="filters" method="GET" action="{{ url_for('main.browse') }}">
-        <div class="filter-section">
-            <h3>Pet Type</h3>
-            <div class="filter-options">
-                <div class="filter-option">
-                    <input type="checkbox" id="type-dog" name="types[]" value="Dog"
-                        {% if "Dog" in selected_types %}checked{% endif %}>
-                    <label for="type-dog">Dog</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="type-cat" name="types[]" value="Cat"
-                        {% if "Cat" in selected_types %}checked{% endif %}>
-                    <label for="type-cat">Cat</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="type-other" name="types[]" value="Other"
-                        {% if "Other" in selected_types %}checked{% endif %}>
-                    <label for="type-other">Other</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="filter-section">
-            <h3>Breed</h3>
-            <div class="filter-options">
-                {% for breed in breeds %}
-                <div class="filter-option">
-                    <input type="checkbox" id="breed-{{ breed|lower }}" name="breeds[]" value="{{ breed }}"
-                        {% if breed in selected_breeds %}checked{% endif %}>
-                    <label for="breed-{{ breed|lower }}">{{ breed }}</label>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="filter-section">
-            <h3>Status</h3>
-            <div class="filter-options">
-                <div class="filter-option">
-                    <input type="checkbox" id="status-available" name="status[]" value="Available"
-                        {% if "Available" in selected_status %}checked{% endif %}>
-                    <label for="status-available">Available</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="status-not-available" name="status[]" value="Not Available"
-                        {% if "Not Available" in selected_status %}checked{% endif %}>
-                    <label for="status-not-available">Not Available</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="status-pending" name="status[]" value="Pending"
-                        {% if "Pending" in selected_status %}checked{% endif %}>
-                    <label for="status-pending">Pending</label>
-                </div>
-                <div class="filter-option">
-                    <input type="checkbox" id="status-adopted" name="status[]" value="Adopted"
-                        {% if "Adopted" in selected_status %}checked{% endif %}>
-                    <label for="status-adopted">Adopted</label>
-                </div>
-            </div>
-        </div>
-
-        <input type="hidden" name="page" value="{{ current_page }}">
-        <button type="submit" class="btn apply-filters">Apply Filters</button>
-    </form>
 
     <div class="gallery-container">
         {% if data %}
