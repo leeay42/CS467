@@ -58,3 +58,5 @@ def create_app():
         pass
     
     return app
+
+# Registering blueprints: https://realpython.com/flask-blueprint/?utm_source=chatgpt.com
