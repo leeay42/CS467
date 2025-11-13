@@ -38,6 +38,26 @@
 			{% endif %}
 		{% endwith %}
 
+		{# Form Section - Create or Edit based on animal variable#}
+	  	<div class="form-section">
+			{% if animal %}
+				<h2>Edit Pet</h2>
+			{% else %}
+				<h2>Create New Pet</h2>
+			{% endif %}
+
+		{# Name Field #}
+		{# Pet Type Field #}
+		{# Availability Field #}
+		{# Breed Field #}
+		{# Profile Date (Read Only) Field #}
+		{# Disposition Field #}
+		{# News Item Field #}
+		{# Image Upload Field #}
+		{# Submit Button #}
+
+		</div>
+
 		<div id="browse">
 			<table border="1" cellpadding="5">
 				{% if pets and pets|length > 0 %}
