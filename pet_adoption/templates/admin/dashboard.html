@@ -108,7 +108,9 @@
 
 			<!-- Name Field -->
 				<div class="form-group">
+					<!-- render field lable -->
 					{{ form.name.label }}
+					<!-- render field input field with CSS styling -->
 					{{ form.name(class="form-control") }}
 					{% if form.name.errors %}
 						<div class="error">
@@ -161,7 +163,7 @@
 				<!-- Profile Date Field (Read Only) -->
 				<div class="form-group">
 					{{ form.profile_date.label }}
-					{{ form.profile_date(class="form-control") }}
+					{{ form.profile_date(readonly = True, class="form-control") }}
 					{% if form.profile_date.errors %}
 						<div class="error">
 							{% for error in form.profile_date.errors %}
