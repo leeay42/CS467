@@ -42,6 +42,8 @@
 	  	<div class="form-section">
 			{% if animal %}
 				<h2>Edit Pet</h2>
+				<form action="{{ url_for('admin.admin_dashboard') }}" method="post">
+				</form>
 			{% else %}
 				<h2>Create New Pet</h2>
 			{% endif %}
@@ -58,9 +60,10 @@
 
 		</div>
 
+		{# Pets Table #}
 		<div id="browse">
-			<table border="1" cellpadding="5">
-				{% if pets and pets|length > 0 %}
+			<table class="table" border="1" cellpadding="5">
+				{% if animals and animals|length > 0 %}
 					<thead>
 						<tr>
 							<th>Pet Name</th>
@@ -75,20 +78,19 @@
 						</tr>
 					</thead>
 					<tbody>
-					{% for document in pets %}
+					{% for animal in animals %}
 						<tr>
-							<th scope="row">{{ document.name }}</th>
-							<td>{{ document.availability }}</td>
-							<td>{{ document.type }}</td>
-							<td>{{ document.breed }}</td>
-							<td>{{ document.description }}</td>
-							<td>{% if document.disposition %}{{ document.disposition | join(', ') }}{% else %}--{% endif %}</td>
-							<td>{{ document.news_item or '--' }}</td>
-							<td>{% if document.public_image %}Image{% else %}--{% endif %}</td>
+							<td>{{ animal.name }}</td>
+							<td>{{ animal.type }}</td>
+							<td>{{ animal.breed }}</td>
+							<td>{{ animal.description }}</td>
+							<td>{{ animal.disposition | join(', ') }}</td>
+							<td>{{ animal.news_item}}</td>
+							<td>{% if animal.public_image %}Image{% else %}--{% endif %}</td>
 							<td>
-								<a class="btn" href="{{ url_for('admin.edit_pet', id=document._id) if document._id is defined else url_for('admin.edit_pet', id=document.id) }}">Edit</a>
+								<a class="btn btn-success" href="{{ url_for('admin.edit_pet', id=animal._id) }}">Edit</a>
 
-								<form action="{{ url_for('admin.delete_pet', id=document._id) if document._id is defined else url_for('admin.delete_pet', id=document.id) }}" method="post" style="display:inline">
+								<form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post" style="display:inline">
 									{% if csrf_token is defined %}
 										<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 									{% endif %}
@@ -102,9 +104,6 @@
 					<tr><td colspan="9">No pets available.</td></tr>
 				{% endif %}
 			</table>
-
-			<p>&nbsp;</p>
-			<p><a href="{{ url_for('admin.create_pet') }}">Add A New Pet</a></p>
 		</div>
 
 	</body>
