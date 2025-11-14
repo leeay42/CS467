@@ -1,3 +1,4 @@
+## https://www.ezzeddinabdullah.com/post/frontend-crud-flask-jinja-bootstrap/
 <!DOCTYPE html>
 
 	<html>
@@ -29,7 +30,60 @@
 		</ul>
 	  </nav>
 
-		{# Flash messages #}
+		<div id="browse">
+			<h1>Pet Management Dashboard</h1>
+
+			{# Create New Pet Button#}
+			<div class="action-buttons">
+				<button class="btn btn-primary" onclick="openCreateModal()"> Add New Pet</button>
+			</div>
+
+			{# Pets Table #}
+			<table class="table" border="1" cellpadding="5">
+				{% if animals and animals|length > 0 %}
+					<thead>
+						<tr>
+							<th>Pet Name</th>
+							<th>Availability</th>
+							<th>Type</th>
+							<th>Breed</th>
+							<th>Description</th>
+							<th>Disposition</th>
+							<th>News Items</th>
+							<th>Images</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for animal in animals %}
+						<tr>
+							<td>{{ animal.name }}</td>
+							<td>{{ animal.type }}</td>
+							<td>{{ animal.breed }}</td>
+							<td>{{ animal.description }}</td>
+							<td>{{ animal.disposition | join(', ') }}</td>
+							<td>{{ animal.news_item}}</td>
+							<td>{% if animal.public_image %}Image{% else %}--{% endif %}</td>
+							<td>
+								<button class="btn btn-success" onclick="openEditModal('{{ animal._id }}')">Edit</button>
+
+								<form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post" style="display:inline">
+									{% if csrf_token is defined %}
+										<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+									{% endif %}
+									<button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+								</form>
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				{% else %}
+					<tr><td colspan="9">No pets available. Click "Add New Pet" to create one!</td></tr>
+				{% endif %}
+			</table>
+		</div>
+
+	{# Flash messages #}
 		{% with messages = get_flashed_messages(with_categories=true) %}
 			{% if messages %}
 				{% for category, message in messages %}
@@ -60,51 +114,7 @@
 
 		</div>
 
-		{# Pets Table #}
-		<div id="browse">
-			<table class="table" border="1" cellpadding="5">
-				{% if animals and animals|length > 0 %}
-					<thead>
-						<tr>
-							<th>Pet Name</th>
-							<th>Availability</th>
-							<th>Type</th>
-							<th>Breed</th>
-							<th>Description</th>
-							<th>Disposition</th>
-							<th>News Items</th>
-							<th>Images</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-					{% for animal in animals %}
-						<tr>
-							<td>{{ animal.name }}</td>
-							<td>{{ animal.type }}</td>
-							<td>{{ animal.breed }}</td>
-							<td>{{ animal.description }}</td>
-							<td>{{ animal.disposition | join(', ') }}</td>
-							<td>{{ animal.news_item}}</td>
-							<td>{% if animal.public_image %}Image{% else %}--{% endif %}</td>
-							<td>
-								<a class="btn btn-success" href="{{ url_for('admin.edit_pet', id=animal._id) }}">Edit</a>
-
-								<form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post" style="display:inline">
-									{% if csrf_token is defined %}
-										<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-									{% endif %}
-									<button type="submit" class="btn btn-danger">Delete</button>
-								</form>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				{% else %}
-					<tr><td colspan="9">No pets available.</td></tr>
-				{% endif %}
-			</table>
-		</div>
 
 	</body>
 	</html>
+	
