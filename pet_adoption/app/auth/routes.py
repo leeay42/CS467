@@ -2,12 +2,11 @@ from flask import render_template, redirect, url_for, flash, request, session, B
 import base64
 from app import db
 from flask import session, redirect, flash, render_template, Blueprint
+from app.auth import auth
 from app.auth.forms import LoginForm, RegisterForm
-## Removed circular import: from app.auth import auth
 #from app.forms import TestForm
 
 users_collection = db['users']
-auth = Blueprint('auth', __name__)
 
 @auth.route('/')
 def index():
