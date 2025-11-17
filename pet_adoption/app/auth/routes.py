@@ -32,7 +32,7 @@ def login():
         else:
             print("unsuccessful")
             flash("User not found. Please try again or create an account.")
-            return redirect('/login')
+            return redirect(url_for('auth.login'))
     return render_template('auth/login.html', form=form)
     
 @auth.route('/register', methods=['GET', 'POST'])
@@ -51,17 +51,17 @@ def register():
         if users_collection.find_one(user):
             print("unsuccessful")
             flash("User already exists. Please try again.")
-            return render_template('register.html')
+            return redirect(url_for('auth.register'))
         # Create user account in DB
         else:
             print("success")
             users_collection.insert_one(user)
             flash("User created successfully. Please log in.")
-            return redirect('/login')
+            return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 # Not in app architecture, clears session
 @auth.route('/logout')
 def logout():
     session.clear()
-    return redirect('/login')
+    return redirect(url_for('auth.login'))
