@@ -116,12 +116,14 @@
 <body>
   <nav class="navbar">
     <ul class="nav-list">
-        <li><a href="browse">Browse Pets</a></li>
-        <li><a href="search">Search Pets</a></li>
-        <li><a href="donate">Donate</a></li>
-        <li><a href="contact">Contact Us</a></li>
-        <li><a href="/">Login</a></li>
-        <li><a href="register">Register</a></li>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        <li><a href="{{ url_for('main.browse') }}">Browse Pets</a></li>
+        <li><a href="{{ url_for('main.search') }}">Search Pets</a></li>
+        <li><a href="{{ url_for('main.donate') }}">Donate</a></li>
+        <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
     </ul>
 </nav>
   <header>
@@ -131,12 +133,14 @@
   </main>
   <footer>
         <ul class="footer-list">
-        <li><a href="browse">Browse Pets</a></li>
-        <li><a href="search">Search Pets</a></li>
-        <li><a href="donate">Donate</a></li>
-        <li><a href="contact">Contact Us</a></li>
-        <li><a href="/">Login</a></li>
-        <li><a href="register">Register</a></li>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        <li><a href="{{ url_for('main.browse') }}">Browse Pets</a></li>
+        <li><a href="{{ url_for('main.search') }}">Search Pets</a></li>
+        <li><a href="{{ url_for('main.donate') }}">Donate</a></li>
+        <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
     </ul>
   </footer>
 </body>
