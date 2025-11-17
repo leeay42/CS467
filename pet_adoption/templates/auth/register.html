@@ -4,15 +4,18 @@
     <title>Register</title>
 
       </head>
-
 {% extends 'base.html' %}
 
-{% block content %}
-  <h2>Create New Account</h2>
+{% block title %} Register {% endblock %}
 
-  <p>An account with Pawsitively Perfect Pets will keep you updated with our newest arrivals</p>
-  <p>By registering, you agree to be sent weekly updates.</p>
-  {% with messages = get_flashed_messages() %}
+{% block content %}
+
+<h2>Create New Account</h2>
+
+<p>An account with Pawsitively Perfect Pets will keep you updated with our newest arrivals</p>
+<p>By registering, you agree to be sent weekly updates.</p>
+
+{% with messages = get_flashed_messages() %}
     {% if messages %}
       <ul class="messages">
         {% for message in messages %}
@@ -21,15 +24,73 @@
       </ul>
     {% endif %}
   {% endwith %}
-  <form method="post" action="{{ url_for('auth.register') }}">
-    <label for="Name">Name:</label>
-    <input type="text" name="name" required>
-    <label for="Email">Email:</label>
-    <input type="text" name="email" required>
-    <label for="password">Password:</label>
-    <input type="password" name="password" required>
-    <button type="submit">Register</button>
-  </form>
+
+
+<form method="POST" action="">
+    {{ form.hidden_tag() }}  <!-- CSRF token -->
+
+    <div class="form-group">
+        {{ form.admin_access() }} {{ form.admin_access.label }}
+        {% if form.admin_access.errors %}
+            {% for error in form.admin_access.errors %}
+                <span class="error">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.first_name.label }}
+        {{ form.first_name(size=32) }}
+        {% if form.first_name.errors %}
+            <span style="color: red;">
+                {% for error in form.first_name.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.last_name.label }}
+        {{ form.last_name(size=32) }}
+        {% if form.first_name.errors %}
+            <span style="color: red;">
+                {% for error in form.last_name.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+
+    </div>
+        {{ form.email.label }}
+        {{ form.email(size=32) }}
+        {% if form.email.errors %}
+            <span style="color: red;">
+                {% for error in form.email.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.password.label }}
+        {{ form.password(size=32) }}
+        {% if form.password.errors %}
+            <span style="color: red;">
+                {% for error in form.password.errors %}
+                    {{ error }}
+                {% endfor %}
+            </span>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+
 {% endblock %}
 
 </html>
