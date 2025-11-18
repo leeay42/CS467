@@ -1,24 +1,266 @@
+<!--
+  References:
+  - https://www.ezzeddinabdullah.com/post/frontend-crud-flask-jinja-bootstrap/
+  - https://www.w3schools.com/howto/howto_css_modals.asp
+  - https://flask-wtf.readthedocs.io/en/1.0.x/quickstart/
+  - https://stackabuse.com/flask-form-validation-with-flask-wtf/
+  - https://hackersandslackers.com/flask-routes/
+-->
+  
 <!DOCTYPE html>
+<html>
+<head>
+	<title>Paw-sitively Purrfect Partners - Admin Dashboard</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-	<html>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f5f5f5;
+		}
 
-	<head>
-		<title>Paw-sitively Purrfect Partners</title>
-		{# keep CSS link commented out for now #}
-		<style>
-		h1 {text-align: center;}
-		section {text-align: center;}
-		.navbar { display: flex; position: sticky; align-items: center; justify-content: space-between; top: 0px; padding: 10px 20px; }
-		.nav-list { display: flex; list-style: none; }
-		.nav-list li { margin-right: 20px; }
-		.btn { background-color: #ffd700; color: #000; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
-		.btn-danger { background-color: #e03e2d; color: #fff; }
-		</style>
+		h1 {
+			text-align: center;
+			margin: 20px 0;
+		}
 
-	</head>
+		section {
+			text-align: center;
+		}
 
-	<body>
-	  <nav class="navbar">
+		.navbar {
+			display: flex;
+			position: sticky;
+			align-items: center;
+			justify-content: space-between;
+			top: 0px;
+			padding: 10px 20px;
+			background-color: #f8f9fa;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			z-index: 100;
+		}
+
+		.nav-list {
+			display: flex;
+			list-style: none;
+		}
+
+		.nav-list li {
+			margin-right: 20px;
+		}
+
+		.nav-list a {
+			text-decoration: none;
+			color: #333;
+			font-weight: 500;
+		}
+
+		.nav-list a:hover {
+			color: #007bff;
+		}
+
+		.btn {
+			background-color: #ffd700;
+			color: #000;
+			border: none;
+			padding: 8px 12px;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+		}
+
+		.btn:hover {
+			opacity: 0.9;
+		}
+
+		.btn-primary {
+			background-color: #007bff;
+			color: white;
+		}
+
+		.btn-secondary {
+			background-color: #6c757d;
+			color: white;
+		}
+
+		.btn-success {
+			background-color: #28a745;
+			color: white;
+		}
+
+		.btn-danger {
+			background-color: #e03e2d;
+			color: white;
+		}
+
+		/* Modal Styles */
+		.modal {
+			position: fixed;
+			z-index: 1000;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.4);
+			display: none;
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 5% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 90%;
+			max-width: 600px;
+			border-radius: 5px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+		}
+
+		.modal-header {
+			border-bottom: 1px solid #e9ecef;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.modal-header h2 {
+			margin: 0;
+		}
+
+		.close-btn {
+			color: #aaa;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.close-btn:hover {
+			color: black;
+		}
+
+		.form-group {
+			margin-bottom: 15px;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+		}
+
+		.form-group input,
+		.form-group select,
+		.form-group textarea {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 14px;
+		}
+
+		.form-group textarea {
+			resize: vertical;
+			min-height: 100px;
+		}
+
+		.form-group input:focus,
+		.form-group select:focus,
+		.form-group textarea:focus {
+			outline: none;
+			border-color: #007bff;
+			box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+		}
+
+		.error {
+			color: #e03e2d;
+			font-size: 12px;
+			margin-top: 5px;
+		}
+
+		.alert {
+			padding: 15px;
+			margin: 10px;
+			border-radius: 4px;
+		}
+
+		.alert-success {
+			background-color: #d4edda;
+			color: #155724;
+			border: 1px solid #c3e6cb;
+		}
+
+		.alert-danger {
+			background-color: #f8d7da;
+			color: #721c24;
+			border: 1px solid #f5c6cb;
+		}
+
+		.action-buttons {
+			margin: 20px 0;
+			text-align: center;
+		}
+
+		#browse {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 20px;
+		}
+
+		table {
+			width: 100%;
+			margin: 20px 0;
+			border-collapse: collapse;
+			background-color: white;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		table thead {
+			background-color: #f8f9fa;
+		}
+
+		table th {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 2px solid #ddd;
+			font-weight: 600;
+		}
+
+		table td {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		}
+
+		table tbody tr:hover {
+			background-color: #f8f9fa;
+		}
+
+		.modal-footer {
+			border-top: 1px solid #e9ecef;
+			margin-top: 20px;
+			padding-top: 15px;
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+		}
+
+		.table {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Navigation -->
+	<nav class="navbar">
 		<ul class="nav-list">
 			<li><a href="{{ url_for('main.browse') if 'main' in globals() else url_for('index') }}">Browse Pets</a></li>
 			<li><a href="{{ url_for('main.search') if 'main' in globals() else '#' }}">Search Pets</a></li>
@@ -27,59 +269,226 @@
 			<li><a href="{{ url_for('auth.login') if 'auth' in globals() else '/' }}">Login</a></li>
 			<li><a href="{{ url_for('auth.register') if 'auth' in globals() else 'register' }}">Register</a></li>
 		</ul>
-	  </nav>
+	</nav>
 
-		{# Support either `data` or `animals` passed from different routes #}
-		{% set pets = data if data is defined else (animals if animals is defined else []) %}
+	<!-- Flash messages -->
+	{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }}">{{ message }}</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
 
-		<div id="browse">
-			<table border="1" cellpadding="5">
-				{% if pets and pets|length > 0 %}
-					<thead>
-						<tr>
-							<th>Pet Name</th>
-							<th>Availability</th>
-							<th>Type</th>
-							<th>Breed</th>
-							<th>Description</th>
-							<th>Disposition</th>
-							<th>News Items</th>
-							<th>Images</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-					{% for document in pets %}
-						<tr>
-							<th scope="row">{{ document.name }}</th>
-							<td>{{ document.availability }}</td>
-							<td>{{ document.type }}</td>
-							<td>{{ document.breed }}</td>
-							<td>{{ document.description }}</td>
-							<td>{% if document.disposition %}{{ document.disposition | join(', ') }}{% else %}--{% endif %}</td>
-							<td>{{ document.news_item or '--' }}</td>
-							<td>{% if document.public_image %}Image{% else %}--{% endif %}</td>
-							<td>
-								<a class="btn" href="{{ url_for('admin.edit_pet', id=document._id) if document._id is defined else url_for('admin.edit_pet', id=document.id) }}">Edit</a>
+	<!-- Main Content -->
+	<div id="browse">
+		<h1>Pet Management Dashboard</h1>
 
-								<form action="{{ url_for('admin.delete_pet', id=document._id) if document._id is defined else url_for('admin.delete_pet', id=document.id) }}" method="post" style="display:inline">
-									{% if csrf_token is defined %}
-										<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-									{% endif %}
-									<button type="submit" class="btn btn-danger">Delete</button>
-								</form>
-							</td>
-						</tr>
-					{% endfor %}
-					</tbody>
-				{% else %}
-					<tr><td colspan="9">No pets available.</td></tr>
-				{% endif %}
-			</table>
-
-			<p>&nbsp;</p>
-			<p><a href="{{ url_for('admin.create_pet') }}">Add A New Pet</a></p>
+		<!-- Create New Pet Button -->
+		<div class="action-buttons">
+			<button class="btn btn-primary" onclick="openCreateModal()">+ Add New Pet</button>
 		</div>
 
-	</body>
-	</html>
+		<!-- Pets Table -->
+		<table class="table" border="1" cellpadding="5">
+			{% if animals and animals|length > 0 %}
+				<thead>
+					<tr>
+						<th>Pet Name</th>
+						<th>Type</th>
+						<th>Availability</th>
+						<th>Breed</th>
+						<th>Description</th>
+						<th>Disposition</th>
+						<th>News Items</th>
+						<th>Images</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+				{% for animal in animals %}
+					<tr>
+						<td>{{ animal.name }}</td>
+						<td>{{ animal.type }}</td>
+						<td>{{ animal.availability }}</td>
+						<td>{{ animal.breed }}</td>
+						<td>{{ animal.description }}</td>
+						<td>{{ animal.disposition | join(', ') }}</td>
+						<td>{{ animal.news_item }}</td>
+						<td>{% if animal.public_image %}Image{% else %}--{% endif %}</td>
+						<td>
+							<button class="btn btn-success" onclick="openEditModal('{{ animal._id }}')">Edit</button>
+							<form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post" style="display:inline">
+								{% if csrf_token is defined %}
+									<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+								{% endif %}
+								<button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			{% else %}
+				<tr><td colspan="9" style="text-align: center;">No pets available. Click "Add New Pet" to create one!</td></tr>
+			{% endif %}
+		</table>
+	</div>
+
+	<!-- Pet Modal -->
+	<div id="petModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 id="modalTitle">Add New Pet</h2>
+				<span class="close-btn" onclick="closeModal()">&times;</span>
+			</div>
+
+			<!-- Flask-WTF Form -->
+			<form method="POST" id="petForm" enctype="multipart/form-data">
+				{{ form.hidden_tag() }}
+
+				<!-- Name Field -->
+				<div class="form-group">
+					<!--renders field label -->
+					{{ form.name.label }}
+					<!--renders field input section -->
+					{{ form.name(class="form-control") }}
+					{% if form.name.errors %}
+						<div class="error">
+							{% for error in form.name.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Type Field -->
+				<div class="form-group">
+					{{ form.type.label }}
+					{{ form.type(class="form-control") }}
+					{% if form.type.errors %}
+						<div class="error">
+							{% for error in form.type.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Availability Field -->
+				<div class="form-group">
+					{{ form.availability.label }}
+					{{ form.availability(class="form-control") }}
+					{% if form.availability.errors %}
+						<div class="error">
+							{% for error in form.availability.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Breed Field -->
+				<div class="form-group">
+					{{ form.breed.label }}
+					{{ form.breed(class="form-control") }}
+					{% if form.breed.errors %}
+						<div class="error">
+							{% for error in form.breed.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Profile Date Field (Read Only) -->
+				<div class="form-group">
+					{{ form.profile_date.label }}
+					{{ form.profile_date(readonly=True, class="form-control") }}
+					{% if form.profile_date.errors %}
+						<div class="error">
+							{% for error in form.profile_date.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Description Field -->
+				<div class="form-group">
+					{{ form.description.label }}
+					{{ form.description(class="form-control") }}
+					{% if form.description.errors %}
+						<div class="error">
+							{% for error in form.description.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Disposition Field -->
+				<div class="form-group">
+					{{ form.disposition.label }}
+					{{ form.disposition(class="form-control") }}
+					{% if form.disposition.errors %}
+						<div class="error">
+							{% for error in form.disposition.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- News Item Field -->
+				<div class="form-group">
+					{{ form.news_item.label }}
+					{{ form.news_item(class="form-control") }}
+					{% if form.news_item.errors %}
+						<div class="error">
+							{% for error in form.news_item.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Image Upload Field -->
+				<div class="form-group">
+					{{ form.public_image.label }}
+					{{ form.public_image() }}
+					{% if form.public_image.errors %}
+						<div class="error">
+							{% for error in form.public_image.errors %}
+								<p>{{ error }}</p>
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+
+				<!-- Modal Footer with Buttons -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+					<button type="submit" class="btn btn-primary">Save Pet</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Reference the external modal.js file -->
+	<script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+
+	<!-- Auto-open modal logic (stays in template because it uses Jinja2) -->
+	<script>
+		{% if animal or form.errors %}
+			document.addEventListener('DOMContentLoaded', function() {
+				{% if animal %}
+					openEditModal('{{ animal._id }}');
+				{% else %}
+					openCreateModal();
+				{% endif %}
+			});
+		{% endif %}
+	</script>
+
+</body>
+</html>

@@ -40,7 +40,7 @@ def admin_dashboard():
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_date": date.now(),
+            "profile_date": date.today(),
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
@@ -105,7 +105,7 @@ def edit_pet(id):
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_data": animal.get('profile_data'),
+            "profile_date": animal.get('profile_date'),
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
