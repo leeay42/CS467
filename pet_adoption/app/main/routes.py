@@ -17,16 +17,25 @@ animals_collection = db['animals']
 # landing page
 @main.route("/")
 def index():
-    # NOTE: highlights go here (also need for profile.html)
-    return render_template('index.html')
+    # Get the 4 newest pets (sorted by profile_date descending)
+    newest_pets_cursor = animals_collection.find({ 'availability' : "Available" }).sort('profile_date', -1).limit(4)
+    
+    # Transform pets and wrap images in a list
+    newest_pets = []
+    for pet in newest_pets_cursor:
+        pet_data = prep_pet(pet)
+        # Wrap the single image string in a list
+        pet_data['images'] = [pet_data['images']]
+        newest_pets.append(pet_data)
+    return render_template('index.html', newest_pets=newest_pets)
 
 
-# NOTE: temp for testing profile.html and base.html
+# renders donate.html
 @main.route("/donate")
 def donate():
     return render_template('donate.html')
 
-# NOTE: temp for testing profile.html and base.html
+# renders contact.html
 @main.route("/contact")
 def contact():
     return render_template('contact.html')
