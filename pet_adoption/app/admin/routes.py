@@ -5,7 +5,7 @@
 # https://codingnomads.com/python-flask-wtf-forms
 # https://ncoughlin.com/posts/restful-routing
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from bson.objectid import ObjectId
 from bson import Binary
 from datetime import date
@@ -40,7 +40,7 @@ def admin_dashboard():
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_date": date.now(),
+            "profile_date": date.today(),
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
@@ -57,7 +57,7 @@ def admin_dashboard():
 
     # GET request: display dashboard with form
     animals = list(animals_collection.find())
-    return render_template('dashboard.html', animals=animals, form=form,
+    return render_template('admin/dashboard.html', animals=animals, form=form,
                            animal=None)
 
 
@@ -105,7 +105,7 @@ def edit_pet(id):
             "type": form.type.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_data": animal.get('profile_data'),
+            "profile_date": animal.get('profile_date'),
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
@@ -125,7 +125,7 @@ def edit_pet(id):
 
     # Render template for GET or failed POST validation
     animals = list(animals_collection.find())
-    return render_template('dashboard.html', form=form, animals=animals,
+    return render_template('admin/dashboard.html', form=form, animals=animals,
                            animal=animal)
 
 

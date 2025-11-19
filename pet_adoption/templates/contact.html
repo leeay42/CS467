@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .contact-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .contact-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .contact-header h1 {
+        font-size: 2.5em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .contact-header p {
+        font-size: 1.2em;
+        color: #666;
+    }
+
+    .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+
+    .contact-form {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .contact-form h2 {
+        margin: 0 0 20px 0;
+        color: #333;
+        font-size: 1.8em;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #ffd700;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background-color: #ffd700;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        background-color: #000;
+        color: #ffd700;
+    }
+
+    .contact-info {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .contact-info h2 {
+        margin: 0 0 20px 0;
+        color: #333;
+        font-size: 1.8em;
+    }
+
+    .info-item {
+        margin-bottom: 25px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 1.2em;
+    }
+
+    .info-item p {
+        margin: 5px 0;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .info-item a {
+        color: #ffd700;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .info-item a:hover {
+        color: #000;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .social-links a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        background-color: #ffd700;
+        color: #000;
+    }
+
+    .map-section {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .map-section h2 {
+        margin: 0 0 20px 0;
+        color: #333;
+        font-size: 1.8em;
+    }
+
+    .map-placeholder {
+        width: 100%;
+        height: 400px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-size: 1.2em;
+    }
+
+    @media (max-width: 768px) {
+        .contact-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="contact-container">
+    <div class="contact-header">
+        <h1>Contact Us</h1>
+        <p>Have questions? We'd love to hear from you!</p>
+    </div>
+
+    <div class="contact-content">
+        <div class="contact-form">
+            <h2>Send Us a Message</h2>
+            <form method="POST" action="{{ url_for('main.contact') }}">
+                <div class="form-group">
+                    <label for="name">Your Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <select id="subject" name="subject" required>
+                        <option value="">Select a subject</option>
+                        <option value="adoption">Adoption Inquiry</option>
+                        <option value="volunteer">Volunteer Opportunities</option>
+                        <option value="donation">Donation Information</option>
+                        <option value="general">General Question</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Your Message *</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+
+        <div class="contact-info">
+            <h2>Get in Touch</h2>
+            
+            <div class="info-item">
+                <h3>📍 Visit Us</h3>
+                <p>123 Pet Adoption Street<br>
+                Minneapolis, MN 55401<br>
+                United States</p>
+            </div>
+
+            <div class="info-item">
+                <h3>📞 Call Us</h3>
+                <p>Main: <a href="tel:+16125551234">(612) 555-1234</a><br>
+                Emergency: <a href="tel:+16125555678">(612) 555-5678</a></p>
+            </div>
+
+            <div class="info-item">
+                <h3>✉️ Email Us</h3>
+                <p>General: <a href="mailto:info@pawsitivelypurrfect.org">info@pawsitivelypurrfect.org</a><br>
+                Adoptions: <a href="mailto:adoptions@pawsitivelypurrfect.org">adoptions@pawsitivelypurrfect.org</a></p>
+            </div>
+
+            <div class="info-item">
+                <h3>🕒 Hours</h3>
+                <p>Monday - Friday: 9:00 AM - 6:00 PM<br>
+                Saturday: 10:00 AM - 4:00 PM<br>
+                Sunday: Closed</p>
+            </div>
+
+            <div class="info-item">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="map-section">
+        <h2>Find Us</h2>
+        <div class="map-placeholder">
+            Map integration goes here
+        </div>
+    </div>
+</div>
+
+{% endblock %}

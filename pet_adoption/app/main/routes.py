@@ -122,4 +122,3 @@ def pet_detail(pet_id):
     # other client errors
     except Exception as e:
         return f"Cannot GET: {pet_id}, Error: {str(e)}", 400
-  
