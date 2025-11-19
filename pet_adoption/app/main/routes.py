@@ -113,8 +113,7 @@ def search():
                         end_index=pagination['end_index'])
 
 # get detail about a single pet
-# will link from "View Profile"
-# search.html and browse.html to profile.html
+# from index.html, search.html and browse.html to profile.html
 @main.route('/pet_detail/<string:pet_id>', methods=['GET'])  
 def pet_detail(pet_id):
     
@@ -123,7 +122,21 @@ def pet_detail(pet_id):
         pet = animals_collection.find_one({'_id': ObjectId(pet_id)})
         if pet:
             prepped_pet = prep_pet(pet)
-            return render_template('profile.html', pet=prepped_pet)
+
+            # Find 5 related available pets based on same type
+            related_query = {
+                '_id': {'$ne': ObjectId(pet_id)},  # Exclude current pet
+                'type': pet['type'],
+                'availability': 'Available'
+            }
+            related_pets_cursor = animals_collection.find(related_query).limit(5)
+            related_pets = [prep_pet(p) for p in related_pets_cursor]
+            
+            # Wrap images in a list for html compatibility
+            for related_pet in related_pets:
+                related_pet['images'] = [related_pet['images']]
+            
+            return render_template('profile.html', pet=prepped_pet, related_pets=related_pets)
 
         else:
             # pet does not exist in db
