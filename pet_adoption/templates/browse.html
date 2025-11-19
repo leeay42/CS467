@@ -119,7 +119,7 @@
                             {{ pet.description }}
                         </div>
                         <div class="pet-actions">
-                            <a href="#" class="btn">Learn More</a>
+                            <a href="{{ url_for('main.pet_detail', pet_id=pet.id) }}" class="btn">Learn More</a>
                         </div>
                     </div>
                 </div>
