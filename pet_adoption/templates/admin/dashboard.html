@@ -7,19 +7,11 @@
   - https://hackersandslackers.com/flask-routes/
 -->
   
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Paw-sitively Purrfect Partners - Admin Dashboard</title>
-	</head>
-
 {% extends 'base.html' %}
 
 {% block title %} Admin Dashboard {% endblock %}
 		
 {% block content %}
-
-<body>
 
 	<!-- Flash messages -->
 	{% with messages = get_flashed_messages(with_categories=true) %}
@@ -30,16 +22,13 @@
 		{% endif %}
 	{% endwith %}
 
-	<!-- Main Content -->
 	<div id="browse">
 		<h1>Pet Management Dashboard</h1>
 
-		<!-- Create New Pet Button -->
 		<div class="action-buttons">
-			<button class="btn btn-primary" onclick="openCreateModal()">+ Add New Pet</button>
+			<a href="{{ url_for('admin.create_pet') }}" class="btn btn-primary">+ Add New Pet</a>
 		</div>
 
-		<!-- Pets Table -->
 		<table class="table" border="1" cellpadding="5">
 			{% if animals and animals|length > 0 %}
 				<thead>
@@ -67,7 +56,7 @@
 						<td>{{ animal.news_item }}</td>
 						<td>{% if animal.public_image %}Image{% else %}--{% endif %}</td>
 						<td>
-							<button class="btn btn-success" onclick="openEditModal('{{ animal._id }}')">Edit</button>
+							<a href="{{ url_for('admin.edit_pet', id=animal._id) }}" class="btn btn-success">Edit</a>
 							<form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post" style="display:inline">
 								{% if csrf_token is defined %}
 									<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -79,167 +68,9 @@
 				{% endfor %}
 				</tbody>
 			{% else %}
-				<tr><td colspan="9" style="text-align: center;">No pets available. Click "Add New Pet" to create one!</td></tr>
+				<tr><td colspan="9" style="text-align: center;">No pets available. <a href="{{ url_for('admin.create_pet') }}">Add one now</a>!</td></tr>
 			{% endif %}
 		</table>
 	</div>
 
-	<!-- Pet Modal -->
-	<div id="petModal" class="modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 id="modalTitle">Add New Pet</h2>
-				<span class="close-btn" onclick="closeModal()">&times;</span>
-			</div>
-
-			<!-- Flask-WTF Form -->
-			<form method="POST" id="petForm" enctype="multipart/form-data">
-				{{ form.hidden_tag() }}
-
-				<!-- Name Field -->
-				<div class="form-group">
-					<!--renders field label -->
-					{{ form.name.label }}
-					<!--renders field input section -->
-					{{ form.name(class="form-control") }}
-					{% if form.name.errors %}
-						<div class="error">
-							{% for error in form.name.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Type Field -->
-				<div class="form-group">
-					{{ form.type.label }}
-					{{ form.type(class="form-control") }}
-					{% if form.type.errors %}
-						<div class="error">
-							{% for error in form.type.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Availability Field -->
-				<div class="form-group">
-					{{ form.availability.label }}
-					{{ form.availability(class="form-control") }}
-					{% if form.availability.errors %}
-						<div class="error">
-							{% for error in form.availability.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Breed Field -->
-				<div class="form-group">
-					{{ form.breed.label }}
-					{{ form.breed(class="form-control") }}
-					{% if form.breed.errors %}
-						<div class="error">
-							{% for error in form.breed.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Profile Date Field (Read Only) -->
-				<div class="form-group">
-					{{ form.profile_date.label }}
-					{{ form.profile_date(readonly=True, class="form-control") }}
-					{% if form.profile_date.errors %}
-						<div class="error">
-							{% for error in form.profile_date.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Description Field -->
-				<div class="form-group">
-					{{ form.description.label }}
-					{{ form.description(class="form-control") }}
-					{% if form.description.errors %}
-						<div class="error">
-							{% for error in form.description.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Disposition Field -->
-				<div class="form-group">
-					{{ form.disposition.label }}
-					{{ form.disposition(class="form-control") }}
-					{% if form.disposition.errors %}
-						<div class="error">
-							{% for error in form.disposition.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- News Item Field -->
-				<div class="form-group">
-					{{ form.news_item.label }}
-					{{ form.news_item(class="form-control") }}
-					{% if form.news_item.errors %}
-						<div class="error">
-							{% for error in form.news_item.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Image Upload Field -->
-				<div class="form-group">
-					{{ form.public_image.label }}
-					{{ form.public_image() }}
-					{% if form.public_image.errors %}
-						<div class="error">
-							{% for error in form.public_image.errors %}
-								<p>{{ error }}</p>
-							{% endfor %}
-						</div>
-					{% endif %}
-				</div>
-
-				<!-- Modal Footer with Buttons -->
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-					<button type="submit" class="btn btn-primary">Save Pet</button>
-				</div>
-			</form>
-		</div>
-	</div>
-
-	<!-- Reference the external modal.js file -->
-	<script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-
-	<!-- Auto-open modal logic (stays in template because it uses Jinja2) -->
-	<script>
-		{% if animal or form.errors %}
-			document.addEventListener('DOMContentLoaded', function() {
-				{% if animal %}
-					openEditModal('{{ animal._id }}');
-				{% else %}
-					openCreateModal();
-				{% endif %}
-			});
-		{% endif %}
-	</script>
-
-	</body>
 {% endblock %}
-</html>

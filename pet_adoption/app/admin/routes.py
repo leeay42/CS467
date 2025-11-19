@@ -18,22 +18,26 @@ from app.auth.decorators import admin_access
 animals_collection = db['animals']
 
 
-@admin.route('/pets/new', methods=['GET', 'POST'])
+@admin.route('/pets', methods=['GET'])
 @admin_access
 def admin_dashboard():
-    """Admin dashboard - GET displays all pets and POST handles add form"""
+    """Just display all pets"""
+    animals = list(animals_collection.find())
+    return render_template('admin/dashboard.html', animals=animals)
+
+
+@admin.route('/pets/new', methods=['GET', 'POST'])
+@admin_access
+def create_pet():
+    """Create new pet - GET shows form, POST handles submission"""
     form = PetForm()
 
-    # Handle POST request for adding a new pet
     if form.validate_on_submit():
-        # Handle image upload and convert to Binary
         image_binary = None
         if form.public_image.data:
             image_file = form.public_image.data
-            image_data = image_file.read()  # Read file bytes
-            image_binary = Binary(image_data)  # convert to mongoDB binary format
+            image_binary = Binary(image_file.read())
 
-        # Create animal document matching schema
         animal = {
             "name": form.name.data,
             "availability": form.availability.data,
@@ -46,63 +50,45 @@ def admin_dashboard():
             "public_image": image_binary
         }
 
-        # Insert into MongoDB
-        result = animals_collection.insert_one(animal)
+        animals_collection.insert_one(animal)
+        flash(f"Pet '{animal['name']}' created successfully!", "success")
+        return redirect(url_for('admin.admin_dashboard'))
 
-        if result.inserted_id:
-            flash(f"Pet '{animal['name']}' created successfully!", "success")
-            return redirect(url_for('admin.admin_dashboard'))
-        else:
-            flash("Error creating pet. Please try again.", "error")
-
-    # GET request: display dashboard with form
-    animals = list(animals_collection.find())
-    return render_template('admin/dashboard.html', animals=animals, form=form,
-                           animal=None)
+    return render_template('admin/pet_form.html', form=form, title="Add New Pet")
 
 
 @admin.route('/pets/<id>/edit', methods=['GET', 'POST'])
 @admin_access
 def edit_pet(id):
-    """Edit an existing pet - GET shows form, POST updates pet"""
+    """Edit pet - GET shows pre-filled form, POST updates"""
     form = PetForm()
-
-    # Find the animal by ID
     animal = animals_collection.find_one({"_id": ObjectId(id)})
 
     if not animal:
         flash("Pet not found.", "error")
         return redirect(url_for('admin.admin_dashboard'))
 
-    # Pre-fill form with existing animal data (for GET request)
+    # Pre-fill form on GET
     if request.method == 'GET':
         form.name.data = animal.get('name')
-        form.availability.data = animal.get('availability')
         form.type.data = animal.get('type')
+        form.availability.data = animal.get('availability')
         form.breed.data = animal.get('breed')
         form.description.data = animal.get('description')
-        form.profile_date.data= animal.get('profile_date')
-
-        if animal.get('disposition'):
-            form.disposition.data = animal.get('disposition')
-
+        form.disposition.data = animal.get('disposition')
         form.news_item.data = animal.get('news_item')
-        # Note: Can't pre-fill file upload field
+        form.profile_date.data = animal.get('profile_date')
 
-    # POST: Update pet
+    # Update on POST
     if form.validate_on_submit():
-        # Handle image upload - keep existing if no new upload
         image_binary = animal.get('public_image')
         if form.public_image.data:
-            image_file = form.public_image.data
-            image_data = image_file.read()
-            image_binary = Binary(image_data)
+            image_binary = Binary(form.public_image.data.read())
 
-        # Update animal document
         updated_animal = {
             "name": form.name.data,
-            "availability": form.availability.data,
             "type": form.type.data,
+            "availability": form.availability.data,
             "breed": form.breed.data,
             "description": form.description.data,
             "profile_date": animal.get('profile_date'),
@@ -111,39 +97,23 @@ def edit_pet(id):
             "public_image": image_binary
         }
 
-        # Update in MongoDB
-        result = animals_collection.update_one(
-            {"_id": ObjectId(id)},
-            {"$set": updated_animal}
-        )
-        if result.modified_count > 0:
-            flash(f"Pet '{updated_animal['name']}' updated successfully!",
-                  "success")
-            return redirect(url_for('admin.admin_dashboard'))
-        else:
-            flash("No changes made.", "info")
+        animals_collection.update_one({"_id": ObjectId(id)}, {"$set": updated_animal})
+        flash(f"Pet '{updated_animal['name']}' updated successfully!", "success")
+        return redirect(url_for('admin.admin_dashboard'))
 
-    # Render template for GET or failed POST validation
-    animals = list(animals_collection.find())
-    return render_template('admin/dashboard.html', form=form, animals=animals,
-                           animal=animal)
+    return render_template('admin/pet_form.html', form=form, animal=animal, title="Edit Pet")
 
 
 @admin.route('/pets/<id>/delete', methods=['POST'])
 @admin_access
 def delete_pet(id):
-    """Remove a pet from the database"""
+    """Delete pet"""
     animal = animals_collection.find_one({"_id": ObjectId(id)})
-
+    
     if not animal:
         flash("Pet not found.", "error")
         return redirect(url_for('admin.admin_dashboard'))
 
-    result = animals_collection.delete_one({"_id": ObjectId(id)})
-
-    if result.deleted_count > 0:
-        flash(f"Pet '{animal['name']}' deleted successfully.", "success")
-    else:
-        flash("Error deleting pet. Please try again.", "error")
-
+    animals_collection.delete_one({"_id": ObjectId(id)})
+    flash(f"Pet '{animal['name']}' deleted successfully.", "success")
     return redirect(url_for('admin.admin_dashboard'))

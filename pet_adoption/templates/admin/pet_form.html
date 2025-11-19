@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+		
+{% block content %}
+
+	<div class="form-container">
+		<h1>{{ title }}</h1>
+
+		<form method="POST" enctype="multipart/form-data">
+			{{ form.hidden_tag() }}
+
+			<!-- Name -->
+			<div class="form-group">
+				{{ form.name.label }}
+				{{ form.name(class="form-control") }}
+				{% if form.name.errors %}
+					<div class="error">{% for error in form.name.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Type -->
+			<div class="form-group">
+				{{ form.type.label }}
+				{{ form.type(class="form-control") }}
+				{% if form.type.errors %}
+					<div class="error">{% for error in form.type.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Availability -->
+			<div class="form-group">
+				{{ form.availability.label }}
+				{{ form.availability(class="form-control") }}
+				{% if form.availability.errors %}
+					<div class="error">{% for error in form.availability.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Breed -->
+			<div class="form-group">
+				{{ form.breed.label }}
+				{{ form.breed(class="form-control") }}
+				{% if form.breed.errors %}
+					<div class="error">{% for error in form.breed.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Profile Date (Read Only) -->
+			<div class="form-group">
+				{{ form.profile_date.label }}
+				{{ form.profile_date(readonly=True, class="form-control") }}
+			</div>
+
+			<!-- Description -->
+			<div class="form-group">
+				{{ form.description.label }}
+				{{ form.description(class="form-control") }}
+				{% if form.description.errors %}
+					<div class="error">{% for error in form.description.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Disposition -->
+			<div class="form-group">
+				{{ form.disposition.label }}
+				{{ form.disposition(class="form-control") }}
+				{% if form.disposition.errors %}
+					<div class="error">{% for error in form.disposition.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- News Item -->
+			<div class="form-group">
+				{{ form.news_item.label }}
+				{{ form.news_item(class="form-control") }}
+				{% if form.news_item.errors %}
+					<div class="error">{% for error in form.news_item.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Image Upload -->
+			<div class="form-group">
+				{{ form.public_image.label }}
+				{{ form.public_image() }}
+				{% if form.public_image.errors %}
+					<div class="error">{% for error in form.public_image.errors %}<p>{{ error }}</p>{% endfor %}</div>
+				{% endif %}
+			</div>
+
+			<!-- Buttons -->
+			<div class="form-buttons">
+				<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+				<button type="submit" class="btn btn-primary">Save Pet</button>
+			</div>
+		</form>
+	</div>
+
+{% endblock %}
