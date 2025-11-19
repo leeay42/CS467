@@ -115,16 +115,18 @@
 </head>
 <body>
   <nav class="navbar">
-    <ul class="nav-list">
-        <li><a href="{{ url_for('main.index') }}">Home</a></li>
-        <li><a href="{{ url_for('main.browse') }}">Browse Pets</a></li>
-        <li><a href="{{ url_for('main.search') }}">Search Pets</a></li>
-        <li><a href="{{ url_for('main.donate') }}">Donate</a></li>
-        <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
-        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-        <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-    </ul>
+    <ul class="nav-list"> 
+      <li><a href="{{ url_for('main.index') }}">Home</a></li>
+      <li><a href="{{ url_for('main.browse') }}">Browse Pets</a></li>
+      <li><a href="{{ url_for('main.search') }}">Search Pets</a></li>
+      <li><a href="{{ url_for('main.donate') }}">Donate</a></li>
+      <li><a href="{{ url_for('main.contact') }}">Contact Us</a></li>
+      <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+      <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+      <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+      {% if session.get('admin_access') %} 
+      <li><a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a></li>
+      {% endif %}</ul>
 </nav>
   <header>
   </header>
@@ -141,7 +143,9 @@
         <li><a href="{{ url_for('auth.login') }}">Login</a></li>
         <li><a href="{{ url_for('auth.register') }}">Register</a></li>
         <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-    </ul>
+        {% if session.get('admin_access') %} 
+        <li><a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a></li>
+        {% endif %}</ul>
   </footer>
 </body>
 </html>

@@ -57,7 +57,7 @@ def admin_dashboard():
 
     # GET request: display dashboard with form
     animals = list(animals_collection.find())
-    return render_template('dashboard.html', animals=animals, form=form,
+    return render_template('admin/dashboard.html', animals=animals, form=form,
                            animal=None)
 
 
@@ -125,7 +125,7 @@ def edit_pet(id):
 
     # Render template for GET or failed POST validation
     animals = list(animals_collection.find())
-    return render_template('dashboard.html', form=form, animals=animals,
+    return render_template('admin/dashboard.html', form=form, animals=animals,
                            animal=animal)
 
 
