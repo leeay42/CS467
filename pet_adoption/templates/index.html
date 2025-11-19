@@ -199,7 +199,7 @@
 
     <div class="pets-grid">
         {% for pet in newest_pets %}
-            <a href="{{ url_for('main.highlight', pet_id=pet.id) }}" class="pet-card">
+            <a href="{{ url_for('main.pet_detail', pet_id=pet.id) }}" class="pet-card">
                 <div class="pet-image">
                     <img src="{{ pet.images[0] if pet.images else '/static/placeholder.jpg' }}" 
                          alt="{{ pet.pet_name }}">
