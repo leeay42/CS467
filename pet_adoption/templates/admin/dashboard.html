@@ -38,6 +38,28 @@
         transform: translateY(-5px);
     }
 
+    .pet-image {
+        height: 200px;
+        overflow: hidden;
+        background-color: #f5f5f5;
+    }
+
+    .pet-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .placeholder-image {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f0f0;
+        color: #666;
+        font-style: italic;
+    }
+
     .pet-info {
         padding: 15px;
     }
@@ -78,16 +100,96 @@
         flex: 1;
         text-align: center;
         min-width: 80px;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .pet-actions form {
+        flex: 1;
+    }
+
+    .pet-actions form button {
+        width: 100%;
     }
 
     .action-buttons {
         margin-bottom: 30px;
     }
 
+    .action-buttons .btn {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.95em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
     .no-pets {
         text-align: center;
         padding: 40px 20px;
         color: #666;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 30px;
     }
 
     @media (max-width: 1200px) {
@@ -124,6 +226,13 @@
             <div class="pet-gallery">
                 {% for animal in animals %}
                     <div class="pet-card">
+                        <div class="pet-image">
+                            {% if animal.public_image %}
+                                <img src="{{ url_for('admin.get_pet_image', id=animal._id) }}" alt="{{ animal.name }}">
+                            {% else %}
+                                <div class="placeholder-image">No Image Available</div>
+                            {% endif %}
+                        </div>
                         <div class="pet-info">
                             <h3>{{ animal.name }}</h3>
                             <p><strong>Type:</strong> {{ animal.type }}</p>
@@ -133,19 +242,16 @@
                             {% if animal.news_item %}
                                 <p><strong>News:</strong> {{ animal.news_item }}</p>
                             {% endif %}
-                            {% if animal.public_image %}
-                                <p><strong>Image:</strong> ✓</p>
-                            {% endif %}
                             <div class="description">
                                 {{ animal.description }}
                             </div>
                             <div class="pet-actions">
                                 <a href="{{ url_for('admin.edit_pet', id=animal._id) }}" class="btn btn-success">Edit</a>
-                                <form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post" style="flex: 1;">
+                                <form action="{{ url_for('admin.delete_pet', id=animal._id) }}" method="post">
                                     {% if csrf_token is defined %}
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     {% endif %}
-                                    <button type="submit" class="btn btn-danger" style="width: 100%;" onclick="return confirm('Are you sure?')">Delete</button>
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                                 </form>
                             </div>
                         </div>
