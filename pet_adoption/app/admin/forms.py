@@ -21,7 +21,7 @@ class PetForm(FlaskForm):
         ], validate_choice=True)
     breed = StringField('Breed', validators=[DataRequired(), Length(min=2, max=100)])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=5, max=300)])
-    profile_date = DateField('Profile Date (Read-only)', render_kw={'readonly': True})
+    profile_date = DateField('Profile Date')
 
     # SelectMultipleField automatically returns a list which aligns with current DB structure
     disposition = SelectMultipleField('Disposition', validators=[DataRequired()], choices=[
