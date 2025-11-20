@@ -19,25 +19,6 @@ def admin_dashboard():
     animals = list(animals_collection.find())
     return render_template('admin/dashboard.html', animals=animals)
 
-@admin.route('/pets/<id>/image')
-@admin_access
-def get_pet_image(id):
-    """Retrieve pet image"""
-    try:
-        animal = animals_collection.find_one({"_id": ObjectId(id)})
-        if animal and animal.get('public_image'):
-            image_data = animal.get('public_image')
-            return send_file(
-                BytesIO(image_data),
-                mimetype='image/jpeg',
-                as_attachment=False
-            )
-    except Exception as e:
-        print(f"Error retrieving image: {e}")
-    
-    # Return 404 if no image - template will show "No Image Available"
-    abort(404)
-
 
 @admin.route('/pets/new', methods=['GET', 'POST'])
 @admin_access
