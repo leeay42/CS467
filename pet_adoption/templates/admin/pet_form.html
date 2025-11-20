@@ -1,99 +1,238 @@
 {% extends 'base.html' %}
 
 {% block title %} {{ title }} {% endblock %}
-		
+
 {% block content %}
 
-	<div class="form-container">
-		<h1>{{ title }}</h1>
+<style>
+    .page-layout {
+        display: flex;
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
-		<form method="POST" enctype="multipart/form-data">
-			{{ form.hidden_tag() }}
+    .gallery-container {
+        flex: 1;
+        min-width: 0;
+    }
 
-			<!-- Name -->
-			<div class="form-group">
-				{{ form.name.label }}
-				{{ form.name(class="form-control") }}
-				{% if form.name.errors %}
-					<div class="error">{% for error in form.name.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .form-container {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
-			<!-- Type -->
-			<div class="form-group">
-				{{ form.type.label }}
-				{{ form.type(class="form-control") }}
-				{% if form.type.errors %}
-					<div class="error">{% for error in form.type.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .form-container h1 {
+        margin-top: 0;
+        margin-bottom: 30px;
+        color: #333;
+    }
 
-			<!-- Availability -->
-			<div class="form-group">
-				{{ form.availability.label }}
-				{{ form.availability(class="form-control") }}
-				{% if form.availability.errors %}
-					<div class="error">{% for error in form.availability.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .form-group {
+        margin-bottom: 20px;
+    }
 
-			<!-- Breed -->
-			<div class="form-group">
-				{{ form.breed.label }}
-				{{ form.breed(class="form-control") }}
-				{% if form.breed.errors %}
-					<div class="error">{% for error in form.breed.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+    }
 
-			<!-- Profile Date -->
-			<div class="form-group">
-				{{ form.profile_date.label }}
-				{{ form.profile_date(class="form-control") }}
-			</div>
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.95em;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+    }
 
-			<!-- Description -->
-			<div class="form-group">
-				{{ form.description.label }}
-				{{ form.description(class="form-control") }}
-				{% if form.description.errors %}
-					<div class="error">{% for error in form.description.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
 
-			<!-- Disposition -->
-			<div class="form-group">
-				{{ form.disposition.label }}
-				{{ form.disposition(class="form-control") }}
-				{% if form.disposition.errors %}
-					<div class="error">{% for error in form.disposition.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
 
-			<!-- News Item -->
-			<div class="form-group">
-				{{ form.news_item.label }}
-				{{ form.news_item(class="form-control") }}
-				{% if form.news_item.errors %}
-					<div class="error">{% for error in form.news_item.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        color: #721c24;
+        padding: 10px 12px;
+        margin-top: 6px;
+        font-size: 0.9em;
+    }
 
-			<!-- Image Upload -->
-			<div class="form-group">
-				{{ form.public_image.label }}
-				{{ form.public_image() }}
-				{% if form.public_image.errors %}
-					<div class="error">{% for error in form.public_image.errors %}<p>{{ error }}</p>{% endfor %}</div>
-				{% endif %}
-			</div>
+    .error p {
+        margin: 4px 0;
+    }
 
-			<!-- Buttons -->
-			<div class="form-buttons">
-				<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
-				<button type="submit" class="btn btn-primary">Save Pet</button>
-			</div>
-		</form>
-	</div>
+    .error p:first-child {
+        margin-top: 0;
+    }
+
+    .error p:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+        justify-content: flex-end;
+    }
+
+    .form-buttons .btn {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 0.95em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 20px;
+        }
+
+        .form-buttons {
+            flex-direction: column;
+        }
+
+        .form-buttons .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="page-layout">
+    <div class="gallery-container">
+        <div class="form-container">
+            <h1>{{ title }}</h1>
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <!-- Name -->
+                <div class="form-group">
+                    {{ form.name.label }}
+                    {{ form.name(class="form-control") }}
+                    {% if form.name.errors %}
+                        <div class="error">{% for error in form.name.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Type -->
+                <div class="form-group">
+                    {{ form.type.label }}
+                    {{ form.type(class="form-control") }}
+                    {% if form.type.errors %}
+                        <div class="error">{% for error in form.type.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Availability -->
+                <div class="form-group">
+                    {{ form.availability.label }}
+                    {{ form.availability(class="form-control") }}
+                    {% if form.availability.errors %}
+                        <div class="error">{% for error in form.availability.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Breed -->
+                <div class="form-group">
+                    {{ form.breed.label }}
+                    {{ form.breed(class="form-control") }}
+                    {% if form.breed.errors %}
+                        <div class="error">{% for error in form.breed.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Profile Date -->
+                <div class="form-group">
+                    {{ form.profile_date.label }}
+                    {{ form.profile_date(class="form-control") }}
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    {{ form.description.label }}
+                    {{ form.description(class="form-control") }}
+                    {% if form.description.errors %}
+                        <div class="error">{% for error in form.description.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Disposition -->
+                <div class="form-group">
+                    {{ form.disposition.label }}
+                    {{ form.disposition(class="form-control") }}
+                    {% if form.disposition.errors %}
+                        <div class="error">{% for error in form.disposition.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- News Item -->
+                <div class="form-group">
+                    {{ form.news_item.label }}
+                    {{ form.news_item(class="form-control") }}
+                    {% if form.news_item.errors %}
+                        <div class="error">{% for error in form.news_item.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Image Upload -->
+                <div class="form-group">
+                    {{ form.public_image.label }}
+                    {{ form.public_image(class="form-control") }}
+                    {% if form.public_image.errors %}
+                        <div class="error">{% for error in form.public_image.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-buttons">
+                    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Pet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
