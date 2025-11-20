@@ -127,6 +127,37 @@
         font-size: 0.9em;
     }
 
+    .date-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .date-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .date-input-wrapper label {
+        color: #666;
+        font-size: 0.85em;
+        font-weight: 500;
+    }
+
+    .date-input-wrapper input[type="date"] {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9em;
+        cursor: pointer;
+    }
+
+    .date-input-wrapper input[type="date"]:focus {
+        outline: none;
+        border-color: #ffd700;
+    }
+
     .apply-filters {
         margin-top: 20px;
         width: 100%;
@@ -376,6 +407,20 @@
             </div>
         </div>
 
+        <div class="filter-section">
+            <h3>Profile Date Range</h3>
+            <div class="date-input-group">
+                <div class="date-input-wrapper">
+                    <label for="date_from">From:</label>
+                    <input type="date" id="date_from" name="date_from" value="{{ date_from if date_from else '' }}">
+                </div>
+                <div class="date-input-wrapper">
+                    <label for="date_to">To:</label>
+                    <input type="date" id="date_to" name="date_to" value="{{ date_to if date_to else '' }}">
+                </div>
+            </div>
+        </div>
+
         <button type="submit" class="btn apply-filters">Apply Filters</button>
     </form>
 
@@ -424,10 +469,10 @@
 
             <div class="pagination">
                 {% if start_index > 0 %}
-                    <a href="{{ url_for('main.search', page=current_page-1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability}) }}" class="btn">Previous</a>
+                    <a href="{{ url_for('main.search', page=current_page-1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability, 'date_from': date_from, 'date_to': date_to}) }}" class="btn">Previous</a>
                 {% endif %}
                 {% if end_index < results|length %}
-                    <a href="{{ url_for('main.search', page=current_page+1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability}) }}" class="btn">Next</a>
+                    <a href="{{ url_for('main.search', page=current_page+1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability, 'date_from': date_from, 'date_to': date_to}) }}" class="btn">Next</a>
                 {% endif %}
             </div>
         {% else %}
@@ -444,11 +489,16 @@
         const filterTags = document.getElementById('filterTags');
         const activeFiltersDiv = document.getElementById('activeFilters');
         const checkboxes = document.querySelectorAll('.filters input[type="checkbox"]:checked');
+        const dateFrom = document.getElementById('date_from').value;
+        const dateTo = document.getElementById('date_to').value;
         
         filterTags.innerHTML = '';
         
-        if (checkboxes.length > 0) {
+        let hasFilters = checkboxes.length > 0 || dateFrom || dateTo;
+        
+        if (hasFilters) {
             activeFiltersDiv.classList.add('show');
+            
             checkboxes.forEach(checkbox => {
                 const tag = document.createElement('div');
                 tag.className = 'filter-tag';
@@ -458,6 +508,26 @@
                 `;
                 filterTags.appendChild(tag);
             });
+            
+            if (dateFrom) {
+                const tag = document.createElement('div');
+                tag.className = 'filter-tag';
+                tag.innerHTML = `
+                    From: ${dateFrom}
+                    <button type="button" onclick="clearDateFilter('date_from')">×</button>
+                `;
+                filterTags.appendChild(tag);
+            }
+            
+            if (dateTo) {
+                const tag = document.createElement('div');
+                tag.className = 'filter-tag';
+                tag.innerHTML = `
+                    To: ${dateTo}
+                    <button type="button" onclick="clearDateFilter('date_to')">×</button>
+                `;
+                filterTags.appendChild(tag);
+            }
         } else {
             activeFiltersDiv.classList.remove('show');
         }
@@ -468,10 +538,17 @@
         updateActiveFilters();
     }
 
+    function clearDateFilter(dateInputId) {
+        document.getElementById(dateInputId).value = '';
+        updateActiveFilters();
+    }
+
     function clearAllFilters() {
         document.querySelectorAll('.filters input[type="checkbox"]').forEach(checkbox => {
             checkbox.checked = false;
         });
+        document.getElementById('date_from').value = '';
+        document.getElementById('date_to').value = '';
         updateActiveFilters();
     }
 
@@ -482,6 +559,10 @@
     document.querySelectorAll('.filters input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', updateActiveFilters);
     });
+
+    // Update active filters when date inputs change
+    document.getElementById('date_from').addEventListener('change', updateActiveFilters);
+    document.getElementById('date_to').addEventListener('change', updateActiveFilters);
 </script>
 
 {% endblock %}
