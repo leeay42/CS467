@@ -1,149 +1,142 @@
-# https://stackoverflow.com/questions/40015103/upload-file-size-16mb-to-mongodb
-# https://flask-wtf.readthedocs.io/en/1.0.x/quickstart/
-# https://stackabuse.com/flask-form-validation-with-flask-wtf/
-# https://hackersandslackers.com/flask-routes/
-# https://codingnomads.com/python-flask-wtf-forms
-# https://ncoughlin.com/posts/restful-routing
-
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file, abort
 from bson.objectid import ObjectId
 from bson import Binary
-from datetime import date
+from datetime import datetime
+from io import BytesIO
 from app import db
 from app.admin.forms import PetForm
 from app.admin import admin
 from app.auth.decorators import admin_access
 
-# Get MongoDB collections
+# MongoDB collection
 animals_collection = db['animals']
+
+
+@admin.route('/pets', methods=['GET'])
+@admin_access
+def admin_dashboard():
+    """Display all pets"""
+    animals = list(animals_collection.find())
+    return render_template('admin/dashboard.html', animals=animals)
+
+@admin.route('/pets/<id>/image')
+@admin_access
+def get_pet_image(id):
+    """Retrieve pet image"""
+    try:
+        animal = animals_collection.find_one({"_id": ObjectId(id)})
+        if animal and animal.get('public_image'):
+            image_data = animal.get('public_image')
+            return send_file(
+                BytesIO(image_data),
+                mimetype='image/jpeg',
+                as_attachment=False
+            )
+    except Exception as e:
+        print(f"Error retrieving image: {e}")
+    
+    # Return 404 if no image - template will show "No Image Available"
+    abort(404)
 
 
 @admin.route('/pets/new', methods=['GET', 'POST'])
 @admin_access
-def admin_dashboard():
-    """Admin dashboard - GET displays all pets and POST handles add form"""
+def create_pet():
+    """Create a new pet"""
     form = PetForm()
-
-    # Handle POST request for adding a new pet
     if form.validate_on_submit():
-        # Handle image upload and convert to Binary
-        image_binary = None
-        if form.public_image.data:
-            image_file = form.public_image.data
-            image_data = image_file.read()  # Read file bytes
-            image_binary = Binary(image_data)  # convert to mongoDB binary format
+        # Validate image is required for new pets
+        if not form.public_image.data:
+            flash("An image is required when creating a new pet.", "error")
+            return render_template('admin/pet_form.html', form=form, title="Add New Pet")
+        
+        # Handle image
+        image_binary = Binary(form.public_image.data.read())
 
-        # Create animal document matching schema
+        # Convert profile_date (datetime.date) to datetime.datetime
+        profile_datetime = datetime.combine(form.profile_date.data, datetime.min.time()) if form.profile_date.data else None
+
         animal = {
             "name": form.name.data,
-            "availability": form.availability.data,
             "type": form.type.data,
+            "availability": form.availability.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_date": date.today(),
+            "profile_date": profile_datetime,
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
         }
 
-        # Insert into MongoDB
-        result = animals_collection.insert_one(animal)
+        animals_collection.insert_one(animal)
+        flash(f"Pet '{animal['name']}' created successfully!", "success")
+        return redirect(url_for('admin.admin_dashboard'))
 
-        if result.inserted_id:
-            flash(f"Pet '{animal['name']}' created successfully!", "success")
-            return redirect(url_for('admin.admin_dashboard'))
-        else:
-            flash("Error creating pet. Please try again.", "error")
-
-    # GET request: display dashboard with form
-    animals = list(animals_collection.find())
-    return render_template('admin/dashboard.html', animals=animals, form=form,
-                           animal=None)
+    return render_template('admin/pet_form.html', form=form, title="Add New Pet")
 
 
 @admin.route('/pets/<id>/edit', methods=['GET', 'POST'])
 @admin_access
 def edit_pet(id):
-    """Edit an existing pet - GET shows form, POST updates pet"""
-    form = PetForm()
-
-    # Find the animal by ID
+    """Edit a pet"""
     animal = animals_collection.find_one({"_id": ObjectId(id)})
-
     if not animal:
         flash("Pet not found.", "error")
         return redirect(url_for('admin.admin_dashboard'))
 
-    # Pre-fill form with existing animal data (for GET request)
+    form = PetForm()
+
+    # Pre-fill form on GET
     if request.method == 'GET':
         form.name.data = animal.get('name')
-        form.availability.data = animal.get('availability')
         form.type.data = animal.get('type')
+        form.availability.data = animal.get('availability')
         form.breed.data = animal.get('breed')
         form.description.data = animal.get('description')
-        form.profile_date.data= animal.get('profile_date')
-
-        if animal.get('disposition'):
-            form.disposition.data = animal.get('disposition')
-
+        form.disposition.data = animal.get('disposition')
         form.news_item.data = animal.get('news_item')
-        # Note: Can't pre-fill file upload field
+        # Convert datetime.datetime back to date for form display
+        form.profile_date.data = animal.get('profile_date').date() if animal.get('profile_date') else None
 
-    # POST: Update pet
+    # Update on POST
     if form.validate_on_submit():
-        # Handle image upload - keep existing if no new upload
-        image_binary = animal.get('public_image')
+        # Handle image - can only replace with another image, not remove
         if form.public_image.data:
-            image_file = form.public_image.data
-            image_data = image_file.read()
-            image_binary = Binary(image_data)
+            image_binary = Binary(form.public_image.data.read())
+        else:
+            image_binary = animal.get('public_image')
 
-        # Update animal document
+        # Convert profile_date to datetime.datetime
+        profile_datetime = datetime.combine(form.profile_date.data, datetime.min.time()) if form.profile_date.data else None
+
         updated_animal = {
             "name": form.name.data,
-            "availability": form.availability.data,
             "type": form.type.data,
+            "availability": form.availability.data,
             "breed": form.breed.data,
             "description": form.description.data,
-            "profile_date": animal.get('profile_date'),
+            "profile_date": profile_datetime,
             "disposition": form.disposition.data,
             "news_item": form.news_item.data,
             "public_image": image_binary
         }
 
-        # Update in MongoDB
-        result = animals_collection.update_one(
-            {"_id": ObjectId(id)},
-            {"$set": updated_animal}
-        )
-        if result.modified_count > 0:
-            flash(f"Pet '{updated_animal['name']}' updated successfully!",
-                  "success")
-            return redirect(url_for('admin.admin_dashboard'))
-        else:
-            flash("No changes made.", "info")
+        animals_collection.update_one({"_id": ObjectId(id)}, {"$set": updated_animal})
+        flash(f"Pet '{updated_animal['name']}' updated successfully!", "success")
+        return redirect(url_for('admin.admin_dashboard'))
 
-    # Render template for GET or failed POST validation
-    animals = list(animals_collection.find())
-    return render_template('admin/dashboard.html', form=form, animals=animals,
-                           animal=animal)
+    return render_template('admin/pet_form.html', form=form, animal=animal, title="Edit Pet")
 
 
 @admin.route('/pets/<id>/delete', methods=['POST'])
 @admin_access
 def delete_pet(id):
-    """Remove a pet from the database"""
+    """Delete a pet"""
     animal = animals_collection.find_one({"_id": ObjectId(id)})
-
     if not animal:
         flash("Pet not found.", "error")
         return redirect(url_for('admin.admin_dashboard'))
 
-    result = animals_collection.delete_one({"_id": ObjectId(id)})
-
-    if result.deleted_count > 0:
-        flash(f"Pet '{animal['name']}' deleted successfully.", "success")
-    else:
-        flash("Error deleting pet. Please try again.", "error")
-
+    animals_collection.delete_one({"_id": ObjectId(id)})
+    flash(f"Pet '{animal['name']}' deleted successfully.", "success")
     return redirect(url_for('admin.admin_dashboard'))
