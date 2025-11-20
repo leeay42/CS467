@@ -45,8 +45,13 @@ def create_pet():
     """Create a new pet"""
     form = PetForm()
     if form.validate_on_submit():
+        # Validate image is required for new pets
+        if not form.public_image.data:
+            flash("An image is required when creating a new pet.", "error")
+            return render_template('admin/pet_form.html', form=form, title="Add New Pet")
+        
         # Handle image
-        image_binary = Binary(form.public_image.data.read()) if form.public_image.data else None
+        image_binary = Binary(form.public_image.data.read())
 
         # Convert profile_date (datetime.date) to datetime.datetime
         profile_datetime = datetime.combine(form.profile_date.data, datetime.min.time()) if form.profile_date.data else None
@@ -95,7 +100,11 @@ def edit_pet(id):
 
     # Update on POST
     if form.validate_on_submit():
-        image_binary = Binary(form.public_image.data.read()) if form.public_image.data else animal.get('public_image')
+        # Handle image - can only replace with another image, not remove
+        if form.public_image.data:
+            image_binary = Binary(form.public_image.data.read())
+        else:
+            image_binary = animal.get('public_image')
 
         # Convert profile_date to datetime.datetime
         profile_datetime = datetime.combine(form.profile_date.data, datetime.min.time()) if form.profile_date.data else None

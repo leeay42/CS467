@@ -217,13 +217,20 @@
                 </div>
 
                 <!-- Image Upload -->
-                <div class="form-group">
-                    {{ form.public_image.label }}
-                    {{ form.public_image(class="form-control") }}
-                    {% if form.public_image.errors %}
-                        <div class="error">{% for error in form.public_image.errors %}<p>{{ error }}</p>{% endfor %}</div>
-                    {% endif %}
-                </div>
+				<div class="form-group">
+					{{ form.public_image.label }}
+					{{ form.public_image(class="form-control") }}
+					{% if form.public_image.errors %}
+						<div class="error">{% for error in form.public_image.errors %}<p>{{ error }}</p>{% endfor %}</div>
+					{% endif %}
+					<small style="color: #666; margin-top: 5px; display: block;">
+						{% if title == "Add New Pet" %}
+							<strong>Required:</strong> An image must be provided when creating a new pet.
+						{% else %}
+							Adding a new image will replace the existing image.
+						{% endif %}
+					</small>
+				</div>
 
                 <!-- Buttons -->
                 <div class="form-buttons">

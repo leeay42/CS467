@@ -32,6 +32,6 @@ class PetForm(FlaskForm):
 
     news_item = TextAreaField('News Item', validators=[DataRequired(), 
                                                        Length(min=2, max=300)])
-    public_image = FileField('Image File', validators=[DataRequired(),
+    public_image = FileField('Image File', validators=[
                              FileAllowed(['jpg', 'png', 'jpeg'], 'JPG/PNG/JPEG only')])
     submit = SubmitField('Submit')
