@@ -17,16 +17,25 @@ animals_collection = db['animals']
 # landing page
 @main.route("/")
 def index():
-    # NOTE: highlights go here (also need for profile.html)
-    return render_template('index.html')
+    # Get the 4 newest pets (sorted by profile_date descending)
+    newest_pets_cursor = animals_collection.find({ 'availability' : "Available" }).sort('profile_date', -1).limit(4)
+    
+    # Transform pets and wrap images in a list
+    newest_pets = []
+    for pet in newest_pets_cursor:
+        pet_data = prep_pet(pet)
+        # Wrap the single image string in a list
+        pet_data['images'] = [pet_data['images']]
+        newest_pets.append(pet_data)
+    return render_template('index.html', newest_pets=newest_pets)
 
 
-# NOTE: temp for testing profile.html and base.html
+# renders donate.html
 @main.route("/donate")
 def donate():
     return render_template('donate.html')
 
-# NOTE: temp for testing profile.html and base.html
+# renders contact.html
 @main.route("/contact")
 def contact():
     return render_template('contact.html')
@@ -104,8 +113,7 @@ def search():
                         end_index=pagination['end_index'])
 
 # get detail about a single pet
-# will link from "View Profile"
-# search.html and browse.html to profile.html
+# from index.html, search.html and browse.html to profile.html
 @main.route('/pet_detail/<string:pet_id>', methods=['GET'])  
 def pet_detail(pet_id):
     
@@ -114,7 +122,21 @@ def pet_detail(pet_id):
         pet = animals_collection.find_one({'_id': ObjectId(pet_id)})
         if pet:
             prepped_pet = prep_pet(pet)
-            return render_template('profile.html', pet=prepped_pet)
+
+            # Find 5 related available pets based on same type
+            related_query = {
+                '_id': {'$ne': ObjectId(pet_id)},  # Exclude current pet
+                'type': pet['type'],
+                'availability': 'Available'
+            }
+            related_pets_cursor = animals_collection.find(related_query).limit(5)
+            related_pets = [prep_pet(p) for p in related_pets_cursor]
+            
+            # Wrap images in a list for html compatibility
+            for related_pet in related_pets:
+                related_pet['images'] = [related_pet['images']]
+            
+            return render_template('profile.html', pet=prepped_pet, related_pets=related_pets)
 
         else:
             # pet does not exist in db
