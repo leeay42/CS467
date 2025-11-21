@@ -1,4 +1,6 @@
 Flask
 pymongo[srv]
 Flask-PyMongo
+email_validator
 Flask-WTF
+gunicorn

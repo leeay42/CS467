@@ -37,6 +37,17 @@ def create_app():
                 template_folder='../templates',
                 static_folder='../static')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+
+    @app.route('/test-data')
+    def test_data():
+        animals = list(db['animals'].find({}, {'_id': 0}).limit(5))
+        users = list(db['users'].find({}, {'_id': 0}).limit(5))
+        return {
+            'pets_count': db['animals'].count_documents({}),
+            'users_count': db['users'].count_documents({}),
+            'sample_pets': animals,
+            'sample_users': users
+        }
     
     # Register blueprints
     from app.admin.routes import admin
