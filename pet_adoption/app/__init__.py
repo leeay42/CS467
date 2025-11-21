@@ -2,7 +2,8 @@ from flask import Flask
 from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
-from urllib.parse import quote_plus  # Add this import
+import certifi
+import ssl
 
 # Load environment variables from the project .env explicitly. Using an explicit path avoids
 # an AssertionError that can happen when find_dotenv() inspects call frames (seen when
@@ -16,9 +17,14 @@ else:
     load_dotenv()
 
 # MongoDB connection
-db_username = quote_plus(os.getenv('MONGO_USERNAME'))  # Add quote_plus
-db_password = quote_plus(os.getenv('MONGO_PASSWORD'))  # Add quote_plus
+db_username = os.getenv('MONGO_USERNAME')  # Add quote_plus
+db_password = os.getenv('MONGO_PASSWORD')  # Add quote_plus
 db_name = os.getenv('MONGO_DB_NAME')
+
+print("Raw username:", repr(db_username))
+print("Raw password:", repr(db_password))
+print("Raw db_name:", repr(db_name))
+
 
 # Validate required env vars early and provide a clear message if missing.
 if not db_username or not db_password or not db_name:
@@ -28,10 +34,11 @@ if not db_username or not db_password or not db_name:
     )
 
 # Build the Atlas connection URI. If you use a different host/URI, replace this with your MONGO_URI.
-mongo_uri = f"mongodb+srv://{db_username}:{db_password}@cluster0.okjtuan.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
-client = MongoClient(mongo_uri)
+mongo_uri = f"mongodb+srv://{db_username}:{db_password}@cluster0.okjtuan.mongodb.net/{db_name}?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(mongo_uri, tlsCAFile=certifi.where())
 db = client[db_name]
 
+print("Full URI:", mongo_uri) 
 def create_app():
     app = Flask(__name__, 
                 template_folder='../templates',

@@ -1,34 +1,77 @@
 <!DOCTYPE html>
-<html>
-
-<head>
-    <title>Logout</title>
-</head>
-
 {% extends 'base.html' %}
-
-{% block title %} Logout {% endblock %}
-
+{% block title %}Logout{% endblock %}
 
 {% block content %}
-<h2>User Logout</h2>
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul class="messages">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+<style>
+    .logout-container {
+        max-width: 400px;
+        margin: 80px auto;
+        padding: 40px;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    .logout-container h2 {
+        margin: 0 0 12px 0;
+        color: #333;
+        font-weight: 600;
+    }
+    .logout-container .message {
+        color: #666;
+        font-size: 15px;
+        margin-bottom: 24px;
+    }
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background: #4a90d9;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .submit-btn:hover {
+        background: #3a7bc8;
+    }
+    .flash-messages {
+        list-style: none;
+        padding: 12px 16px;
+        margin: 0 0 20px 0;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+        color: #856404;
+        text-align: left;
+    }
+    .flash-messages li {
+        margin: 4px 0;
+    }
+</style>
 
-<form method="POST" action="">
-    {{ form.hidden_tag() }}  <!-- CSRF token -->
-
-    <div>
-        {{ form.submit() }}
-    </div>
-</form>
-
+<div class="logout-container">
+    <h2>Logout</h2>
+    <p class="message">Are you sure you want to sign out?</p>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.submit(class="submit-btn") }}
+        </div>
+    </form>
+</div>
 {% endblock %}
-</html>
