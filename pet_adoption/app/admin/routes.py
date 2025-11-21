@@ -19,6 +19,7 @@ def admin_dashboard():
     animals = list(animals_collection.find())
     return render_template('admin/dashboard.html', animals=animals)
 
+
 @admin.route('/pets/<id>/image')
 @admin_access
 def get_pet_image(id):
