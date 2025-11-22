@@ -2,7 +2,7 @@ from flask import Flask
 from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
-from urllib.parse import quote_plus  # Add this import
+from urllib.parse import quote_plus
 
 # Load environment variables from the project .env explicitly. Using an explicit path avoids
 # an AssertionError that can happen when find_dotenv() inspects call frames (seen when
