@@ -261,7 +261,7 @@
         <h2>Available Pets You Might Like</h2>
         <div class="related-pets-grid">
             {% for related_pet in related_pets %}
-                <a href="{{ url_for('highlight', pet_id=related_pet.id) }}" class="related-pet-card">
+                <a href="{{ url_for('main.pet_detail', pet_id=related_pet.id) }}" class="related-pet-card">
                     <div class="related-pet-image">
                         <img src="{{ related_pet.images[0] if related_pet.images else '/static/placeholder.jpg' }}" 
                              alt="{{ related_pet.pet_name }}">
