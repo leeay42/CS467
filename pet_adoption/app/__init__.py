@@ -2,6 +2,7 @@ from flask import Flask
 from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
+from urllib.parse import quote_plus
 
 # Load environment variables from the project .env explicitly. Using an explicit path avoids
 # an AssertionError that can happen when find_dotenv() inspects call frames (seen when
@@ -15,8 +16,8 @@ else:
     load_dotenv()
 
 # MongoDB connection
-db_username = os.getenv('MONGO_USERNAME')  # Add quote_plus
-db_password = os.getenv('MONGO_PASSWORD')  # Add quote_plus
+db_username = quote_plus(os.getenv('MONGO_USERNAME'))  # Add quote_plus
+db_password = quote_plus(os.getenv('MONGO_PASSWORD'))  # Add quote_plus
 db_name = os.getenv('MONGO_DB_NAME')
 
 # Validate required env vars early and provide a clear message if missing.
