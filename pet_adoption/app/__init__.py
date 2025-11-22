@@ -28,9 +28,9 @@ if not db_username or not db_password or not db_name:
     )
 
 # Build the Atlas connection URI. If you use a different host/URI, replace this with your MONGO_URI.
-mongo_uri = f"mongodb+srv://{db_username}:{db_password}@cluster0.okjtuan.mongodb.net/{db_name}?retryWrites=true&w=majority&appName=Cluster0"
 mongo_uri = f"mongodb+srv://{db_username}:{db_password}@cluster0.okjtuan.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
 client = MongoClient(mongo_uri)
+db = client[db_name]
 
 def create_app():
     app = Flask(__name__, 
