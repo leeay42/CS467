@@ -4,3 +4,4 @@ Flask-PyMongo
 email_validator
 Flask-WTF
 gunicorn
+python-dotenv
