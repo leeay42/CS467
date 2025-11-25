@@ -1,0 +1,21 @@
+﻿name,availability,type,breed,disposition,public_image
+Lassie,Not Available,dog,Collie,Animal must be leashed at all times,./images/image1.png
+Salem,Available,cat,Domestic Shorthair,Good with other animals;Good with children;Animal must be leashed at all times,./images/image2.png
+Potato,Pending,other,,Good with other animals;Good with children,./images/image3.png
+Tramp,Adopted,dog,Mixed Breed,Good with other animals,./images/image4.png
+Mufasa,Not Available,cat,Domestic Longhair,Good with children,./images/image5.png
+Cap. Ybara,Available,other,,Animal must be leashed at all times,./images/image6.png
+Gidget,Pending,dog,Pomeranian,Good with other animals;Good with children;Animal must be leashed at all times,./images/image7.png
+Meowth,Adopted,cat,Siamese,Good with other animals;Good with children,./images/image8.png
+Tuxedo Sam,Not Available,other,,Good with other animals,./images/image9.png
+Scooby-Doo,Available,dog,Great Dane,Good with children,./images/image10.png
+Princess,Pending,cat,Maine Coone,Animal must be leashed at all times,./images/image11.png
+Rabbit of Caerbannog,Adopted,other,,Good with other animals;Good with children;Animal must be leashed at all times,./images/image12.png
+Dug,Not Available,dog,Golden Retriever,Good with other animals;Good with children,./images/image13.png
+Milo,Available,cat,Ragdoll,Good with other animals,./images/image14.png
+Buckbeak,Pending,other,,Good with children,./images/image15.png
+Gromit,Adopted,dog,Beagle,Good with other animals;Good with children,./images/image16.png
+Mr. Bigglesworth,Not Available,cat,Persian,Good with other animals,./images/image17.png
+Smiley,Available,other,,Good with children,./images/image18.png
+Pongo,Pending,dog,Dalmatian,Animal must be leashed at all times,./images/image19.png
+Mr. Bigglesworth,Available,cat,Sphynx,Good with other animals;Good with children;Animal must be leashed at all times,./images/image20.png
