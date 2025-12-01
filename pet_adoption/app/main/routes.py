@@ -69,6 +69,7 @@ def search():
     selected_types = request.args.getlist('types[]')
     selected_breeds = request.args.getlist('breeds[]')
     selected_availability = request.args.getlist('availability[]')
+    selected_disposition = request.args.getlist('disposition[]')
     date_from = request.args.get('date_from')  # Format: YYYY-MM-DD
     date_to = request.args.get('date_to')      # Format: YYYY-MM-DD
         
@@ -80,6 +81,9 @@ def search():
         query['breed'] = {'$in': selected_breeds}
     if selected_availability:
         query['availability'] = {'$in': selected_availability}
+    if selected_disposition:
+        query['disposition'] = {'$all': selected_disposition,
+                                '$size': len(selected_disposition)}
     
     # Date range filter for profile_date
     if date_from or date_to:
@@ -106,6 +110,7 @@ def search():
                         selected_types=selected_types,
                         selected_breeds=selected_breeds,
                         selected_availability=selected_availability,
+                        selected_disposition=selected_disposition,
                         date_from=date_from,
                         date_to=date_to,
                         current_page=pagination['page'],
