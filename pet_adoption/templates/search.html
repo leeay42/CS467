@@ -408,6 +408,27 @@
         </div>
 
         <div class="filter-section">
+            <h3>Disposition</h3>
+            <div class="filter-options">
+                <div class="filter-option">
+                    <input type="checkbox" id="disposition-good-animals" name="disposition[]" value="Good with other animals"
+                        {% if "Good with other animals" in selected_disposition %}checked{% endif %}>
+                    <label for="disposition-good-animals">Good with other animals</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="disposition-good-children" name="disposition[]" value="Good with children"
+                        {% if "Good with children" in selected_disposition %}checked{% endif %}>
+                    <label for="disposition-good-children">Good with children</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="disposition-leashed" name="disposition[]" value="Animal must be leashed at all times"
+                        {% if "Animal must be leashed at all times" in selected_disposition %}checked{% endif %}>
+                    <label for="disposition-leashed">Animal must be leashed at all times</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-section">
             <h3>Profile Date Range</h3>
             <div class="date-input-group">
                 <div class="date-input-wrapper">
@@ -469,10 +490,10 @@
 
             <div class="pagination">
                 {% if start_index > 0 %}
-                    <a href="{{ url_for('main.search', page=current_page-1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability, 'date_from': date_from, 'date_to': date_to}) }}" class="btn">Previous</a>
+                    <a href="{{ url_for('main.search', page=current_page-1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability, 'disposition[]': selected_disposition, 'date_from': date_from, 'date_to': date_to}) }}" class="btn">Previous</a>
                 {% endif %}
                 {% if end_index < results|length %}
-                    <a href="{{ url_for('main.search', page=current_page+1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability, 'date_from': date_from, 'date_to': date_to}) }}" class="btn">Next</a>
+                    <a href="{{ url_for('main.search', page=current_page+1, **{'types[]': selected_types, 'breeds[]': selected_breeds, 'availability[]': selected_availability, 'disposition[]': selected_disposition, 'date_from': date_from, 'date_to': date_to}) }}" class="btn">Next</a>
                 {% endif %}
             </div>
         {% else %}
